@@ -1,0 +1,190 @@
+version: '3'
+#
+#  Component arrangement is as below:
+#  
+#  ┌────────────┐    ┌────────────┐   ┌─────────────┐    ┌──────────┐
+#  │            │    │            │   │             │    │          │
+#  │ Simulator  ├───►│ Simulator  ├──►│  Mojaloop   ├───►│  Switch  │
+#  │ Backend    │    │   Core     │   │  Connector  │    │          │
+#  │            │◄───┤ Connector  │◄──┤             │◄───┤          │
+#  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
+#  
+
+services:
+
+  frontend:
+    image: pm4ml/mojaloop-payment-manager-ui:1.10.0
+    ports:
+       - "8080:8080"
+    depends_on:
+      - experience-api
+
+  keycloak:
+    image: jboss/keycloak:12.0.4
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD={{ CHANGE BEFORE INSTALL (KEYCLOAK ADMIN USER PASSWORD) }}
+      - KEYCLOAK_FRONTEND_URL={{ CHANGE BEFORE INSTALL e.g http://localhost:8080/auth }}
+      - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
+#      - DB_VENDOR=postgres
+#      - DB_ADDR=keycloak-postgresql
+#      - DB_PORT=5432
+#      - DB_DATABASE=keycloak
+#      - DB_USER=keycloak
+#      - DB_PASSWORD={{ CHANGE BEFORE INSTALL }}
+    volumes:
+      - ${PWD}/keycloak-realm.json:/tmp/pm4ml-realm.json
+    ports:
+      - "8080:8081"
+#    depends_on:
+#      - keycloak-postgres
+
+#  keycloak-postgres:
+#    image: bitnami/postgresql:11.12.0-debian-10-r23
+
+  experience-api:
+    image: pm4ml/mojaloop-payment-manager-experience-api:1.9.1
+    ports:
+      - "4000:3000"
+    environment:
+      - APP_KEYS={{ CHANGE BEFORE INSTALL e.g. ootu1yoo5geeS7izai4ox1Yae1Eey6ai}}
+      - AUTH_CLIENT_ID=pm4ml-customer-ui
+      - AUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL to match keycloak-realm.json value e.g. c9de89c1-1cb1-4ce3-b226-ddf7363f067a }}
+      - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
+      - AUTH_LOGGED_IN_LANDING_URL={{ CHANGE BEFORE INSTALL e.g. http://localhost:3000/ }}
+      - AUTH_REDIRECT_NAME=pm4ml-customer-ui
+      - AUTH_REDIRECT_URI={{ CHANGE BEFORE INSTALL e.g. http://localhost:4000/auth }}
+      - AUTH_RESOURCE_NAME=pm4ml-customer-ui
+      - AUTH_SCOPES=roles
+      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
+      - ENV_ID=1
+      - MANAGEMENT_ENDPOINT=management-api:9000
+      - METRICS_ENDPOINT=prometheus:9090
+      - MOCK_DATA=false
+      - SESSION_REDIS_URL=redis://redis-sim/2
+      - SESSION_SECURE=false
+    depends_on:
+      - management-api
+      - keycloak
+      - redis
+
+  management-api:
+    image: pm4ml/mojaloop-payment-manager-management-api:2.0.0
+    environment:
+      - AUTH_ENABLED=true
+      - AUTH_PASS=pm4mltest123
+      - AUTH_USER=pm4mltest
+      - CACHE_HOST=redis
+      - CACHE_SYNC_INTERVAL_SECONDS=10
+      - DFSP_CA_PATH=/secrets
+      - DFSP_CA_PATH=/tlsServerCA.pem
+      - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
+      - DFSP_CSR_KEY=a
+      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
+      - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
+      - ENV_ID=1
+      - MCM_API_TOKEN={{ REQUIRED BEFORE INSTALL }}
+      - MCM_CLIENT_REFRESH_INTERVAL=300
+      - MCM_CLIENT_SECRETS_LOCATION=/secrets
+      - MCM_SERVER_ENDPOINT={{ REQUIRED BEFORE INSTALL }}
+      - P12_PASS_PHRASE=SOME_S3C4R3_P@SS
+      - PK_SECRETS_LOCATION=/secrets
+      - PRIVATE_KEY_ALGORITHM=rsa
+      - PRIVATE_KEY_LENGTH=4096
+      - TLS_SERVER_PRIVATE_KEY=/tlsServerPvtKey.key
+      - TLS_SERVER_PRIVATE_KEY=a
+      - WS_PORT=4003
+      - WS_URL=mojaloop-connector
+      - dfspCsrPrivateKeyAlgorithm=rsa
+      - dfspCsrPrivateKeyLength=4096
+      - p12PassPhrase=SOME_S3C4R3_P@SS
+      - tlsClientCSRParametersPath=/resources/tlsClientCSRParameters.json
+      - tlsServerCAPath=/tlsServerCA.pem
+      - tlsServerCSRParametersPath=/resources/tlsServerCSRParameters.json
+      - tlsServerPvtKeyPath=/tlsServerPvtKey.key
+    volumes:
+      - "/tmp/secrets:/secrets"
+    depends_on:
+      - redis
+      - keycloak
+      - mojaloop-connector
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  simulator-core-connector:
+    image: pm4ml/mojaloop-simulator-core-connector:latest
+    environment:
+      - BACKEND_ENDPOINT=http://sim-backend:3002
+      - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
+    depends_on:
+      - mojaloop-connector
+      - sim-backend
+
+  sim-backend:
+    image: "mojaloop-simulator-backend"
+    environment:
+      - CA_CERT_PATH=./secrets/cacert.pem
+      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
+      - FEE_MULTIPLIER=0.0
+      - HTTPS_ENABLED=false
+      - LOG_INDENT=0
+      - MODEL_DATABASE=./model.sqlite
+      - MUTUAL_TLS_ENABLED=false
+      - OUTBOUND_ENDPOINT=http://simulator-core-connector:4001
+      - REPORT_API_LISTEN_PORT=3002
+      - RULES_FILE=../rules/rules.json
+      - SERVER_CERT_PATH=./secrets/servercert.pem
+      - SERVER_KEY_PATH=./secrets/serverkey.pem
+      - SIMULATOR_API_LISTEN_PORT=3000
+      - SQLITE_LOG_FILE=./log.sqlite
+      - TEST_API_LISTEN_PORT=3003
+
+  redis:
+    image: redis:10.7.16
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT=6379
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_TLS_ENABLED=no
+
+  mojaloop-connector:
+    image: pm4ml/mojaloop-connector:13.2.0
+    environment:
+      - CACHE_HOST=redis
+      - BACKEND_ENDPOINT=simulator-core-connector:3000
+      - DFSP_ID=
+      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
+      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
+      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
+      - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
+      - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
+      - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
+      - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
+      - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
+      - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
+      - JWS_SIGNING_KEY_PATH=/jwsSigningKey/private.key
+      - AUTO_ACCEPT_PARTY=true
+      - AUTO_ACCEPT_QUOTES=true
+      - CACHE_HOST=redis
+      - CACHE_PORT=6379
+      - ENABLE_TEST_FEATURES=true
+      - INBOUND_LISTEN_PORT=4000
+      - INBOUND_MUTUAL_TLS_ENABLED=false
+      - JWS_SIGN=false
+      - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
+      - METRICS_SERVER_LISTEN_PORT=4004
+      - MULTIPLE_PARTIES_RESPONSE=false
+      - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL }}
+      - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL }}
+      - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL }}
+      - OUTBOUND_LISTEN_PORT=4001
+      - OUTBOUND_MUTUAL_TLS_ENABLED=false
+      - TEST_LISTEN_PORT=4002
+      - TEST_MUTUAL_TLS_ENABLED=false
+      - WS_PORT=4003
+    depends_on:
+      - redis
+      
