@@ -172,7 +172,7 @@ services:
       - MULTIPLE_PARTIES_RESPONSE=false
       - MGMT_API_WS_URL=management-api
       - OUTBOUND_LISTEN_PORT=4001
-      - OUTBOUND_MUTUAL_TLS_ENABLED=true
+      - OUTBOUND_MUTUAL_TLS_ENABLED=false
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
