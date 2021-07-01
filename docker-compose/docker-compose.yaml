@@ -12,13 +12,6 @@ version: '3'
 
 services:
 
-  frontend:
-    image: pm4ml/mojaloop-payment-manager-ui:1.10.0
-    ports:
-       - "8081:8080"
-    depends_on:
-      - experience-api
-
   keycloak:
     image: jboss/keycloak:12.0.4
     environment:
@@ -26,47 +19,10 @@ services:
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
-#      - DB_VENDOR=postgres
-#      - DB_ADDR=keycloak-postgresql
-#      - DB_PORT=5432
-#      - DB_DATABASE=keycloak
-#      - DB_USER=keycloak
-#      - DB_PASSWORD={{ CHANGE BEFORE INSTALL }}
     volumes:
       - ${PWD}/keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
       - "8080:8080"
-#    depends_on:
-#      - keycloak-postgres
-
-#  keycloak-postgres:
-#    image: bitnami/postgresql:11.12.0-debian-10-r23
-
-  experience-api:
-    image: pm4ml/mojaloop-payment-manager-experience-api:1.9.1
-    ports:
-      - "4000:3000"
-    environment:
-      - APP_KEYS={{ CHANGE BEFORE INSTALL e.g. ootu1yoo5geeS7izai4ox1Yae1Eey6ai}}
-      - AUTH_CLIENT_ID=pm4ml-customer-ui
-      - AUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL to match keycloak-realm.json value e.g. c9de89c1-1cb1-4ce3-b226-ddf7363f067a }}
-      - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
-      - AUTH_LOGGED_IN_LANDING_URL={{ CHANGE BEFORE INSTALL e.g. http://localhost:3000/ }}
-      - AUTH_REDIRECT_NAME=pm4ml-customer-ui
-      - AUTH_REDIRECT_URI={{ CHANGE BEFORE INSTALL e.g. http://localhost:4000/auth }}
-      - AUTH_RESOURCE_NAME=pm4ml-customer-ui
-      - AUTH_SCOPES=roles
-      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
-      - ENV_ID=1
-      - MANAGEMENT_ENDPOINT=management-api:9000
-      - METRICS_ENDPOINT=prometheus:9090
-      - MOCK_DATA=false
-      - SESSION_REDIS_URL=redis://redis/2
-      - SESSION_SECURE=false
-    depends_on:
-      - management-api
-      - keycloak
-      - redis
 
   management-api:
     image: pm4ml/mojaloop-payment-manager-management-api:2.0.0
@@ -78,15 +34,17 @@ services:
       - CACHE_SYNC_INTERVAL_SECONDS=10
       - DFSP_CA_PATH=/secrets
       - DFSP_CA_PATH=/tlsServerCA.pem
-      - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
+      # - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
       - DFSP_CSR_KEY=a
-      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
-      - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
+      - DFSP_ID=datavision
+      # - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
       - ENV_ID=1
-      - MCM_API_TOKEN={{ REQUIRED BEFORE INSTALL }}
+      # Variable missing
+      - MCM_API_TOKEN=
       - MCM_CLIENT_REFRESH_INTERVAL=300
       - MCM_CLIENT_SECRETS_LOCATION=/secrets
-      - MCM_SERVER_ENDPOINT={{ REQUIRED BEFORE INSTALL }}
+      # Variable missing
+      - MCM_SERVER_ENDPOINT=
       - P12_PASS_PHRASE=SOME_S3C4R3_P@SS
       - PK_SECRETS_LOCATION=/secrets
       - PRIVATE_KEY_ALGORITHM=rsa
@@ -124,10 +82,10 @@ services:
       - sim-backend
 
   sim-backend:
-    image: "mojaloop-simulator-backend"
+    image: mojaloop/mojaloop-simulator
     environment:
       - CA_CERT_PATH=./secrets/cacert.pem
-      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
+      - DFSP_ID=datavision
       - FEE_MULTIPLIER=0.0
       - HTTPS_ENABLED=false
       - LOG_INDENT=0
@@ -135,7 +93,7 @@ services:
       - MUTUAL_TLS_ENABLED=false
       - OUTBOUND_ENDPOINT=http://simulator-core-connector:4001
       - REPORT_API_LISTEN_PORT=3002
-      - RULES_FILE=../rules/rules.json
+      # - RULES_FILE=../rules/rules.json
       - SERVER_CERT_PATH=./secrets/servercert.pem
       - SERVER_KEY_PATH=./secrets/serverkey.pem
       - SIMULATOR_API_LISTEN_PORT=3000
