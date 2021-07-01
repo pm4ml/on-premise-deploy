@@ -15,7 +15,7 @@ services:
   frontend:
     image: pm4ml/mojaloop-payment-manager-ui:1.10.0
     ports:
-       - "8080:8080"
+       - "8081:8080"
     depends_on:
       - experience-api
 
@@ -23,8 +23,8 @@ services:
     image: jboss/keycloak:12.0.4
     environment:
       - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD={{ CHANGE BEFORE INSTALL (KEYCLOAK ADMIN USER PASSWORD) }}
-      - KEYCLOAK_FRONTEND_URL={{ CHANGE BEFORE INSTALL e.g http://localhost:8080/auth }}
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
 #      - DB_VENDOR=postgres
 #      - DB_ADDR=keycloak-postgresql
@@ -35,7 +35,7 @@ services:
     volumes:
       - ${PWD}/keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
-      - "8080:8081"
+      - "8080:8080"
 #    depends_on:
 #      - keycloak-postgres
 
@@ -61,7 +61,7 @@ services:
       - MANAGEMENT_ENDPOINT=management-api:9000
       - METRICS_ENDPOINT=prometheus:9090
       - MOCK_DATA=false
-      - SESSION_REDIS_URL=redis://redis-sim/2
+      - SESSION_REDIS_URL=redis://redis/2
       - SESSION_SECURE=false
     depends_on:
       - management-api
@@ -115,7 +115,7 @@ services:
       - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
-    image: pm4ml/mojaloop-simulator-core-connector:latest
+    image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.0
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3002
       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
@@ -143,7 +143,7 @@ services:
       - TEST_API_LISTEN_PORT=3003
 
   redis:
-    image: redis:10.7.16
+    image: redis:6.2.4-alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PORT=6379
@@ -153,38 +153,43 @@ services:
   mojaloop-connector:
     image: pm4ml/mojaloop-connector:13.2.0
     environment:
-      - CACHE_HOST=redis
-      - BACKEND_ENDPOINT=simulator-core-connector:3000
-      - DFSP_ID=
-      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
-      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
-      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
-      - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
-      - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
-      - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
-      - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
-      - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
-      - JWS_SIGNING_KEY_PATH=/jwsSigningKey/private.key
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
+      - BACKEND_ENDPOINT=simulator-core-connector:3000
       - CACHE_HOST=redis
       - CACHE_PORT=6379
+      - DFSP_ID=datavision
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
       - INBOUND_MUTUAL_TLS_ENABLED=false
+      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
+      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
+      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
       - JWS_SIGN=false
+      - JWS_SIGNING_KEY_PATH=/jwsSigningKey.key
       - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
       - METRICS_SERVER_LISTEN_PORT=4004
       - MULTIPLE_PARTIES_RESPONSE=false
-      - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL }}
-      - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL }}
-      - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL }}
+      - MGMT_API_WS_URL=management-api
       - OUTBOUND_LISTEN_PORT=4001
-      - OUTBOUND_MUTUAL_TLS_ENABLED=false
+      - OUTBOUND_MUTUAL_TLS_ENABLED=true
+      - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
+      - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
+      - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
+      - PEER_ENDPOINT=switch.address
+      - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
+      - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
+      - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
       - TEST_LISTEN_PORT=4002
       - TEST_MUTUAL_TLS_ENABLED=false
       - WS_PORT=4003
+    volumes:
+      - ${PWD}/outbound-cacert.pem:/secrets/outbound-cacert.pem
+      - ${PWD}/outbound-cert.pem:/secrets/outbound-cert.pem
+      - ${PWD}/outbound-key.pem:/secrets/outbound-key.pem
+      - ${PWD}/inbound-cacert.pem:/secrets/inbound-cacert.pem
+      - ${PWD}/inbound-cert.pem:/secrets/inbound-cert.pem
+      - ${PWD}/inbound-key.pem:/secrets/inbound-key.pem
     depends_on:
       - redis
       
