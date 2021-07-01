@@ -115,7 +115,7 @@ services:
       - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
-    image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.0
+    image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.2
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3002
       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
