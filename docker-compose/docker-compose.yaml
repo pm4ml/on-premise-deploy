@@ -12,6 +12,29 @@ version: '3'
 
 services:
 
+  mojaloop-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v12.4.1
+    volumes:
+      - "../../ml-testing-toolkit/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+      - "../../ml-testing-toolkit/secrets:/opt/mojaloop-testing-toolkit/secrets"
+    ports:
+      - "5000:5000"
+      - "5050:5050"
+    command:
+      - sh
+      - -c
+      - "npm start"
+  mojaloop-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v12.2.2
+    ports:
+      - "6060:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5050
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
+
   keycloak:
     image: jboss/keycloak:12.0.4
     environment:
@@ -134,7 +157,7 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT=switch.address
+      - PEER_ENDPOINT=mojaloop-testing-toolkit:5000
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -150,4 +173,9 @@ services:
       - ${PWD}/inbound-key.pem:/secrets/inbound-key.pem
     depends_on:
       - redis
+      - mojaloop-testing-toolkit
+
+networks:
+  default:
+    name: mojaloop-testing-toolkit
       
