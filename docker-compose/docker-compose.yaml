@@ -9,6 +9,10 @@ version: '3'
 #  │            │◄───┤ Connector  │◄──┤             │◄───┤          │
 #  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
 #  
+# For this file to work with docker-compose up both the op-premise-delop and ml-testing-toolkit repositories should be available locally
+# See https://github.com/pm4ml/on-premise-deploy
+# And https://github.com/mojaloop/ml-testing-toolkit
+#
 
 services:
 
