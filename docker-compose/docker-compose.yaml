@@ -126,6 +126,8 @@ services:
       - SIMULATOR_API_LISTEN_PORT=3000
       - SQLITE_LOG_FILE=./log.sqlite
       - TEST_API_LISTEN_PORT=3003
+    ports:
+      - "3003:3003"
 
   redis:
     image: redis:6.2.4-alpine
