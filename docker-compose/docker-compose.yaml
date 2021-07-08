@@ -28,6 +28,7 @@ services:
       - sh
       - -c
       - "npm start"
+
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v12.2.2
     ports:
@@ -112,13 +113,14 @@ services:
     image: mojaloop/mojaloop-simulator
     environment:
       - CA_CERT_PATH=./secrets/cacert.pem
+      #Institution ID maybe need to be numeric not sure
       - DFSP_ID=datavision
       - FEE_MULTIPLIER=0.0
       - HTTPS_ENABLED=false
       - LOG_INDENT=0
       - MODEL_DATABASE=./model.sqlite
       - MUTUAL_TLS_ENABLED=false
-      - OUTBOUND_ENDPOINT=http://simulator-core-connector:4001
+      - OUTBOUND_ENDPOINT=http://simulator-core-connector:3003
       - REPORT_API_LISTEN_PORT=3002
       # - RULES_FILE=../rules/rules.json
       - SERVER_CERT_PATH=./secrets/servercert.pem
