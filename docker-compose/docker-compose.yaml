@@ -48,7 +48,7 @@ services:
       - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
     volumes:
-      - ${PWD}/keycloak-realm.json:/tmp/pm4ml-realm.json
+      - ./keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
       - "8080:8080"
 
@@ -98,7 +98,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
     image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.2
@@ -173,12 +173,12 @@ services:
       - TEST_MUTUAL_TLS_ENABLED=false
       - WS_PORT=4003
     volumes:
-      - ${PWD}/outbound-cacert.pem:/secrets/outbound-cacert.pem
-      - ${PWD}/outbound-cert.pem:/secrets/outbound-cert.pem
-      - ${PWD}/outbound-key.pem:/secrets/outbound-key.pem
-      - ${PWD}/inbound-cacert.pem:/secrets/inbound-cacert.pem
-      - ${PWD}/inbound-cert.pem:/secrets/inbound-cert.pem
-      - ${PWD}/inbound-key.pem:/secrets/inbound-key.pem
+      - ./outbound-cacert.pem:/secrets/outbound-cacert.pem
+      - ./outbound-cert.pem:/secrets/outbound-cert.pem
+      - ./outbound-key.pem:/secrets/outbound-key.pem
+      - ./inbound-cacert.pem:/secrets/inbound-cacert.pem
+      - ./inbound-cert.pem:/secrets/inbound-cert.pem
+      - ./inbound-key.pem:/secrets/inbound-key.pem
     depends_on:
       - redis
       - mojaloop-testing-toolkit
