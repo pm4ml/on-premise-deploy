@@ -98,7 +98,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - /prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
     image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.2
