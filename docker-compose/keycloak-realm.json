@@ -43,6 +43,21 @@
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 30,
+  "users": [
+    {
+      "username" : "test",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "firstName": "test",
+      "lastName": "test",
+      "credentials" : [{ "type" : "password", "value" : "test" }],
+      "realmRoles": ["offline_access", "uma_auhtorization"],
+      "clientRoles": {
+        "realm-management": [ "view-users" ]
+      }
+    }
+  ],
   "roles": {
     "realm": [
       {
@@ -654,15 +669,15 @@
     {
       "id": "152a25c5-bc13-4dba-9739-43ee05d76970",
       "clientId": "pm4ml-customer-ui",
-      "rootUrl": "https://change-on-install.com",
-      "baseUrl": "https://change-on-install.com",
+      "rootUrl": "http://localhost:8081",
+      "baseUrl": "http://localhost:8081",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "a857e3d7-ebd4-4451-aabd-bcb480dde1a3",
       "redirectUris": [
-        "https://change-on-install.com/*"
+        "*"
       ],
       "webOrigins": [
         "*"
@@ -1563,7 +1578,7 @@
         },
         {
           "authenticator": "auth-otp-form",
-          "requirement": "REQUIRED",
+          "requirement": "DISABLED",
           "priority": 20,
           "userSetupAllowed": false,
           "autheticatorFlow": false
@@ -1880,7 +1895,7 @@
           "autheticatorFlow": false
         },
         {
-          "requirement": "REQUIRED",
+          "requirement": "DISABLED",
           "priority": 20,
           "flowAlias": "Browser - Conditional OTP",
           "userSetupAllowed": false,

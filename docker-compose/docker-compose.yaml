@@ -14,6 +14,8 @@ services:
 
   frontend:
     image: pm4ml/mojaloop-payment-manager-ui:1.10.0
+    environment:
+      - API_BASE_URL=http://localhost:4010
     ports:
        - "8081:8080"
     depends_on:
@@ -49,11 +51,11 @@ services:
     environment:
       - APP_KEYS={{ CHANGE BEFORE INSTALL e.g. ootu1yoo5geeS7izai4ox1Yae1Eey6ai}}
       - AUTH_CLIENT_ID=pm4ml-customer-ui
-      - AUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL to match keycloak-realm.json value e.g. c9de89c1-1cb1-4ce3-b226-ddf7363f067a }}
+      - AUTH_CLIENT_SECRET=a857e3d7-ebd4-4451-aabd-bcb480dde1a3
       - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
-      - AUTH_LOGGED_IN_LANDING_URL={{ CHANGE BEFORE INSTALL e.g. http://localhost:3000/ }}
+      - AUTH_LOGGED_IN_LANDING_URL=http://localhost:8081/
       - AUTH_REDIRECT_NAME=pm4ml-customer-ui
-      - AUTH_REDIRECT_URI={{ CHANGE BEFORE INSTALL e.g. http://localhost:4010/auth }}
+      - AUTH_REDIRECT_URI=http://localhost:4010/auth
       - AUTH_RESOURCE_NAME=pm4ml-customer-ui
       - AUTH_SCOPES=roles
       - DFSP_ID={{ CHANGE BEFORE INSTALL }}
@@ -71,22 +73,22 @@ services:
   management-api:
     image: pm4ml/mojaloop-payment-manager-management-api:2.0.0
     environment:
-      - AUTH_ENABLED=true
+      - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
       - AUTH_USER=pm4mltest
       - CACHE_HOST=redis
       - CACHE_SYNC_INTERVAL_SECONDS=10
       - DFSP_CA_PATH=/secrets
       - DFSP_CA_PATH=/tlsServerCA.pem
-      - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
+      # - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
       - DFSP_CSR_KEY=a
-      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
-      - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
+      - DFSP_ID=dfsp1
+      # - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
       - ENV_ID=1
       - MCM_API_TOKEN={{ REQUIRED BEFORE INSTALL }}
-      - MCM_CLIENT_REFRESH_INTERVAL=300
+      - MCM_CLIENT_REFRESH_INTERVAL=180000
       - MCM_CLIENT_SECRETS_LOCATION=/secrets
-      - MCM_SERVER_ENDPOINT={{ REQUIRED BEFORE INSTALL }}
+      - MCM_SERVER_ENDPOINT=localhost:9001
       - P12_PASS_PHRASE=SOME_S3C4R3_P@SS
       - PK_SECRETS_LOCATION=/secrets
       - PRIVATE_KEY_ALGORITHM=rsa
@@ -119,6 +121,8 @@ services:
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3002
       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
+    ports:
+       - "3003:3003"
     depends_on:
       - mojaloop-connector
       - sim-backend
@@ -140,7 +144,7 @@ services:
     image: "mojaloop/simulator"
     environment:
       - CA_CERT_PATH=./secrets/cacert.pem
-      - DFSP_ID={{ CHANGE BEFORE INSTALL }}
+      - DFSP_ID=dfsp1
       - FEE_MULTIPLIER=0.0
       - HTTPS_ENABLED=false
       - LOG_INDENT=0
@@ -171,7 +175,7 @@ services:
       - BACKEND_ENDPOINT=simulator-core-connector:3000
       - CACHE_HOST=redis
       - CACHE_PORT=6379
-      - DFSP_ID=datavision
+      - DFSP_ID=dfsp1
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
       - INBOUND_MUTUAL_TLS_ENABLED=false
@@ -196,9 +200,9 @@ services:
       - TEST_LISTEN_PORT=4002
       - TEST_MUTUAL_TLS_ENABLED=false
       - WS_PORT=4003
-      - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL e.g. https://extgw.dev.product.mbox-dev.io:9443/oauth2/token }}
-      - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL e.g. k9edbgS09cE9qAkiVEaz5Hmuc5Ua }}
-      - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
+      # - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL e.g. https://extgw.dev.product.mbox-dev.io:9443/oauth2/token }}
+      # - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL e.g. k9edbgS09cE9qAkiVEaz5Hmuc5Ua }}
+      # - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
       - VALIDATE_INBOUND_JWS=false
       - RESERVE_NOTIFICATION=false
 #      - RESOURCE_VERSIONS="transfers=1.1"
