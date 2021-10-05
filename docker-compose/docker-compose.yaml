@@ -45,7 +45,7 @@ services:
   experience-api:
     image: pm4ml/mojaloop-payment-manager-experience-api:1.9.1
     ports:
-      - "4000:3000"
+      - "4010:3000"
     environment:
       - APP_KEYS={{ CHANGE BEFORE INSTALL e.g. ootu1yoo5geeS7izai4ox1Yae1Eey6ai}}
       - AUTH_CLIENT_ID=pm4ml-customer-ui
@@ -53,7 +53,7 @@ services:
       - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
       - AUTH_LOGGED_IN_LANDING_URL={{ CHANGE BEFORE INSTALL e.g. http://localhost:3000/ }}
       - AUTH_REDIRECT_NAME=pm4ml-customer-ui
-      - AUTH_REDIRECT_URI={{ CHANGE BEFORE INSTALL e.g. http://localhost:4000/auth }}
+      - AUTH_REDIRECT_URI={{ CHANGE BEFORE INSTALL e.g. http://localhost:4010/auth }}
       - AUTH_RESOURCE_NAME=pm4ml-customer-ui
       - AUTH_SCOPES=roles
       - DFSP_ID={{ CHANGE BEFORE INSTALL }}
@@ -122,9 +122,22 @@ services:
     depends_on:
       - mojaloop-connector
       - sim-backend
+      
+#   core-connector:
+#     image: pm4ml/dgto-pm4ml-core-connector:0.0.20
+#     environment:
+#       - BACKEND_ENDPOINT=http://sim-backend:3002
+#       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
+#     ports:
+#        - "3003:3003"
+#     extra_hosts:
+#       - "dgtof-saccos.co.tz:192.168.10.110"
+#     depends_on:
+#       - mojaloop-connector
+#       - sim-backend
 
   sim-backend:
-    image: "mojaloop-simulator-backend"
+    image: "mojaloop/simulator"
     environment:
       - CA_CERT_PATH=./secrets/cacert.pem
       - DFSP_ID={{ CHANGE BEFORE INSTALL }}
@@ -151,7 +164,7 @@ services:
       - REDIS_TLS_ENABLED=no
 
   mojaloop-connector:
-    image: pm4ml/mojaloop-connector:13.2.0
+    image: pm4ml/mojaloop-connector:14.0.0
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
@@ -176,13 +189,21 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT=switch.address
+      - PEER_ENDPOINT={{ CHANGE BEFORE INSTALL switch.address e.g. extgw.dev.product.mbox-dev.io:8243/fsp/1.0 }}
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
       - TEST_LISTEN_PORT=4002
       - TEST_MUTUAL_TLS_ENABLED=false
       - WS_PORT=4003
+      - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL e.g. https://extgw.dev.product.mbox-dev.io:9443/oauth2/token }}
+      - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL e.g. k9edbgS09cE9qAkiVEaz5Hmuc5Ua }}
+      - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
+      - VALIDATE_INBOUND_JWS=false
+      - RESERVE_NOTIFICATION=false
+#      - RESOURCE_VERSIONS="transfers=1.1"
+    ports:
+      - "4000:4000"
     volumes:
       - ${PWD}/outbound-cacert.pem:/secrets/outbound-cacert.pem
       - ${PWD}/outbound-cert.pem:/secrets/outbound-cert.pem
