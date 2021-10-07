@@ -1,6 +1,18 @@
 # on-premise-deploy
 Code and artefacts required to deploy PM4ML in an on-premise environment
 
+## Running the payment manager
+
+```
+git clone https://github.com/pm4ml/on-premise-deploy.git
+cd on-premise-deploy/docker-compose
+docker-compose up
+```
+
+## Configuration
+
+You need to change the configuration parameter 'PEER_ENDPOINT' of the service 'mojaloop-connector' to execute a transfer.
+
 ## Initiate a transfer
 
 Send the following http request to the simulator core connector to initiate a transfer
