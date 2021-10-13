@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  mojaloop-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v13.5.2
+    volumes:
+      - "./spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+      - "./secrets:/opt/mojaloop-testing-toolkit/secrets"
+    ports:
+      - "5000:5000"
+      - "5050:5050"
+    command:
+      - sh
+      - -c
+      - "npm start"
+  mojaloop-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v13.5.3
+    ports:
+      - "6060:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5050
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
+
+networks:
+  default:
+    name: payment-manager
+
+
