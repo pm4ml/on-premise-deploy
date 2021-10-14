@@ -193,7 +193,7 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT={{ CHANGE BEFORE INSTALL switch.address e.g. extgw.dev.product.mbox-dev.io:8243/fsp/1.0 }}
+      - PEER_ENDPOINT=mojaloop-testing-toolkit:5000
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -217,7 +217,29 @@ services:
       - ${PWD}/inbound-key.pem:/secrets/inbound-key.pem
     depends_on:
       - redis
-      
+
+  mojaloop-testing-toolkit:
+    image: mojaloop/ml-testing-toolkit:v13.5.2
+    volumes:
+      - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+    ports:
+      - "5000:5000"
+      - "5050:5050"
+    command:
+      - sh
+      - -c
+      - "npm start"
+  mojaloop-testing-toolkit-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v13.5.3
+    ports:
+      - "6060:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5050
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
+
 networks:
   default:
     name: payment-manager
