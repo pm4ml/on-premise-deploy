@@ -3,6 +3,8 @@ Code and artefacts required to deploy PM4ML in an on-premise environment
 
 ## Running payment manager with testing toolkit included
 
+![Payment manager with TTK](/assets/images/ttk-scenario1.png)
+
 ### What is Testing Toolkit?
 
 Testing toolkit (TTK) is a tool for simulating and validating mojaloop implementations. We are using TTK in this scenario to simulate a mojaloop switch combined with payee fsp.
