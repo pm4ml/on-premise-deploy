@@ -117,9 +117,10 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
-    image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.5
+    # image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.5
+    image: pm4ml/wallet-core-connector:1.0.11
     environment:
-      - BACKEND_ENDPOINT=http://sim-backend:3002
+      - BACKEND_ENDPOINT=http://sim-backend:3000
       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
     ports:
        - "3003:3003"
@@ -141,7 +142,7 @@ services:
 #       - sim-backend
 
   sim-backend:
-    image: "mojaloop/simulator"
+    image: "mojaloop/mojaloop-simulator:v11.3.0"
     environment:
       - CA_CERT_PATH=./secrets/cacert.pem
       - DFSP_ID=dfsp1
@@ -157,6 +158,7 @@ services:
       - SERVER_KEY_PATH=./secrets/serverkey.pem
       - SIMULATOR_API_LISTEN_PORT=3000
       - SQLITE_LOG_FILE=./log.sqlite
+      # - SQLITE_LOG_FILE=":memory:"
       - TEST_API_LISTEN_PORT=3003
 
   redis:
@@ -172,7 +174,7 @@ services:
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
-      - BACKEND_ENDPOINT=simulator-core-connector:3000
+      - BACKEND_ENDPOINT=simulator-core-connector:3003
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - DFSP_ID=dfsp1
