@@ -153,7 +153,7 @@ services:
       - MUTUAL_TLS_ENABLED=false
       - OUTBOUND_ENDPOINT=http://simulator-core-connector:4001
       - REPORT_API_LISTEN_PORT=3002
-      - RULES_FILE=../rules/rules.json
+      # - RULES_FILE=../rules/rules.json
       - SERVER_CERT_PATH=./secrets/servercert.pem
       - SERVER_KEY_PATH=./secrets/serverkey.pem
       - SIMULATOR_API_LISTEN_PORT=3000
@@ -172,8 +172,8 @@ services:
   mojaloop-connector:
     image: pm4ml/mojaloop-connector:14.1.1
     environment:
-      - AUTO_ACCEPT_PARTY=true
-      - AUTO_ACCEPT_QUOTES=true
+      - AUTO_ACCEPT_PARTY=false
+      - AUTO_ACCEPT_QUOTES=false
       - BACKEND_ENDPOINT=simulator-core-connector:3003
       - CACHE_HOST=redis
       - CACHE_PORT=6379

@@ -1,5 +1,5 @@
 {
-  "name": "multi",
+  "name": "Send Money",
   "test_cases": [
     {
       "id": 1,
@@ -46,9 +46,9 @@
               },
               {
                 "id": 2,
-                "description": "Current state should be Completed",
+                "description": "Current state should be WAITING_FOR_PARTY_ACCEPTANCE",
                 "exec": [
-                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_PARTY_ACCEPTANCE')"
                 ]
               },
               {
@@ -66,10 +66,6 @@
             "preRequest": {
               "exec": [
                 "await inboundEvent.addListener('parties1', 'get', '/parties/MSISDN/{$inputs.payeeIdentifier}')",
-                "",
-                "// await inboundEvent.addListener('quotes1', 'post', '/quotes', (headers, body) => {",
-                "//   return body.quoteId === '<SOME_ID_HERE>'",
-                "// })",
                 ""
               ]
             },
@@ -79,6 +75,93 @@
                 ""
               ]
             }
+          }
+        },
+        {
+          "id": 2,
+          "description": "Confirm Party",
+          "apiVersion": {
+            "minorVersion": 4,
+            "majorVersion": 1,
+            "type": "payment_manager"
+          },
+          "operationPath": "/sendmoney/{transferId}",
+          "path": "/sendmoney/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "body": {
+            "acceptParty": true
+          },
+          "url": "http://simulator-core-connector:3003",
+          "ignoreCallbacks": true,
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be WAITING_FOR_QUOTE_ACCEPTANCE",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('WAITING_FOR_QUOTE_ACCEPTANCE')"
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                "// await inboundEvent.addListener('quotes1', 'post', '/quotes', (headers, body) => {",
+                "//   return body.quoteId === '<SOME_ID_HERE>'",
+                "// })",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 3,
+          "description": "Confirm Quote",
+          "apiVersion": {
+            "minorVersion": 4,
+            "majorVersion": 1,
+            "type": "payment_manager"
+          },
+          "operationPath": "/sendmoney/{transferId}",
+          "path": "/sendmoney/{$prev.1.response.body.transferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$prev.1.response.body.transferId}"
+          },
+          "url": "http://simulator-core-connector:3003",
+          "ignoreCallbacks": true,
+          "body": {
+            "acceptQuote": true
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be Completed",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              }
+            ]
           }
         }
       ]
