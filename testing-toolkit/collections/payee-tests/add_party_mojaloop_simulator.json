@@ -3,9 +3,9 @@
   "test_cases": [
     {
       "id": 1,
-      "name": "P2P Transfer Happy Path",
+      "name": "Provisioning",
       "meta": {
-        "info": "P2P Transfer Happy Path"
+        "info": "Provisioning"
       },
       "requests": [
         {
