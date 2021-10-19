@@ -76,7 +76,7 @@ You should see the logs about the transaction in the Monitoring page already ope
 
 * Open the menu item `Test Runner` in TTK UI.
 * Click on `Collection Manager` button and import the folder 'testing-toolkit/collections/payee-tests'
-* In `Collection Manager`, select the file `provision_mojaloop_simulator.json` and close the collection manager
+* In `Collection Manager`, select the file `add_party_mojaloop_simulator.json` and close the collection manager
 * Click on `Send` button
 * Now we added the MSISDN party to the payee simulator
 * In `Collection Manager`, select the file `p2p_happy_path.json` and close the collection manager
