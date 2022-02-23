@@ -105,7 +105,7 @@ services:
       - tlsServerCAPath=/tlsServerCA.pem
       - tlsServerCSRParametersPath=/resources/tlsServerCSRParameters.json
       - tlsServerPvtKeyPath=/tlsServerPvtKey.key
-      - VAULT_ENDPOINT=http://docker.for.mac.localhost:8233
+      - VAULT_ENDPOINT=http://vault-dev:8233
       - VAULT_PKI_BASE_DOMAIN=example.com
       - VAULT_AUTH_METHOD=APP_ROLE
       - VAULT_ROLE_ID_FILE=/vault/role-id
