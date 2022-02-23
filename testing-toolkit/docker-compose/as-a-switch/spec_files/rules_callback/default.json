@@ -177,8 +177,6 @@
     }
   },
   {
-    "type": "callback",
-    "version": 1,
     "ruleId": 3,
     "priority": 1,
     "description": "post /transfers",
@@ -205,10 +203,16 @@
     "event": {
       "method": "put",
       "path": "/transfers/{ID}",
-      "params": {},
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
       "delay": 0,
       "type": "MOCK_CALLBACK"
-    }
+    },
+    "type": "callback",
+    "version": 1
   },
   {
     "type": "callback",

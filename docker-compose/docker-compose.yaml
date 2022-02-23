@@ -13,7 +13,7 @@ version: '3'
 services:
 
   frontend:
-    image: pm4ml/mojaloop-payment-manager-ui:1.10.0
+    image: pm4ml/mojaloop-payment-manager-ui:1.10.1
     environment:
       - API_BASE_URL=http://localhost:4010
     ports:
@@ -45,7 +45,7 @@ services:
 #    image: bitnami/postgresql:11.12.0-debian-10-r23
 
   experience-api:
-    image: pm4ml/mojaloop-payment-manager-experience-api:1.9.1
+    image: pm4ml/mojaloop-payment-manager-experience-api:2.0.3
     ports:
       - "4010:3000"
     environment:
@@ -71,7 +71,8 @@ services:
       - redis
 
   management-api:
-    image: pm4ml/mojaloop-payment-manager-management-api:2.0.0
+    image: pm4ml/mojaloop-payment-manager-management-api:2.0.4
+    # image: mojaloop-payment-manager-management-api:local
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
@@ -104,12 +105,26 @@ services:
       - tlsServerCAPath=/tlsServerCA.pem
       - tlsServerCSRParametersPath=/resources/tlsServerCSRParameters.json
       - tlsServerPvtKeyPath=/tlsServerPvtKey.key
+      - VAULT_ENDPOINT=http://docker.for.mac.localhost:8233
+      - VAULT_PKI_BASE_DOMAIN=example.com
+      - VAULT_AUTH_METHOD=APP_ROLE
+      - VAULT_ROLE_ID_FILE=/vault/role-id
+      - VAULT_ROLE_SECRET_ID_FILE=/vault/secret-id
+      # - VAULT_MOUNT_PKI=pki
+      # - VAULT_MOUNT_KV=secrets
+
     volumes:
       - "/tmp/secrets:/secrets"
+      - ./vault/tmp:/vault
     depends_on:
-      - redis
-      - keycloak
-      - mojaloop-connector
+      redis:
+        condition: service_started
+      keycloak:
+        condition: service_started
+      mojaloop-connector:
+        condition: service_started
+      vault-dev:
+        condition: service_healthy
 
   prometheus:
     image: prom/prometheus:latest
@@ -171,9 +186,10 @@ services:
 
   mojaloop-connector:
     image: pm4ml/mojaloop-connector:14.1.1
+    # image: mojaloop-connector:local
     environment:
-      - AUTO_ACCEPT_PARTY=false
-      - AUTO_ACCEPT_QUOTES=false
+      - AUTO_ACCEPT_PARTY=true
+      - AUTO_ACCEPT_QUOTES=true
       - BACKEND_ENDPOINT=simulator-core-connector:3003
       - CACHE_HOST=redis
       - CACHE_PORT=6379
@@ -241,8 +257,26 @@ services:
     command:
       - sh
       - /usr/share/nginx/start.sh
-
+  vault-dev:
+    image: vault:1.2.1
+    restart: always
+    container_name: vault-dev
+    environment:
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8233
+      VAULT_ADDR: http://127.0.0.1:8233
+      VAULT_DEV_ROOT_TOKEN_ID: "myroot"
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
+    ports:
+      - "8233:8233"
+    volumes:
+      - ./vault/tmp:/vault/tmp
+      - ./vault/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/service_started"]
+      timeout: 1s
+      retries: 20
 networks:
   default:
     name: payment-manager
-
