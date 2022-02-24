@@ -28,6 +28,7 @@ services:
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
+      - DB_VENDOR=h2
 #      - DB_VENDOR=postgres
 #      - DB_ADDR=keycloak-postgresql
 #      - DB_PORT=5432
