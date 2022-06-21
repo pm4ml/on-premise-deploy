@@ -669,8 +669,8 @@
     {
       "id": "152a25c5-bc13-4dba-9739-43ee05d76970",
       "clientId": "pm4ml-customer-ui",
-      "rootUrl": "http://localhost:8081",
-      "baseUrl": "http://localhost:8081",
+      "rootUrl": "http://35.166.175.125:8081",
+      "baseUrl": "http://35.166.175.125:8081",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,

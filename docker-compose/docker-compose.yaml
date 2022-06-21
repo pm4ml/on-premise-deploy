@@ -26,7 +26,7 @@ services:
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
+      - KEYCLOAK_FRONTEND_URL=http://35.166.175.125:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
       - DB_VENDOR=h2
 #      - DB_VENDOR=postgres

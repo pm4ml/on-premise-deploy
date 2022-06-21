@@ -33,7 +33,7 @@
   },
   "KEYCLOAK": {
     "ENABLED": false,
-    "API_URL": "http://localhost:8080",
+    "API_URL": "http://35.166.175.125:8080",
     "REALM": "testingtoolkit",
     "ADMIN_REALM": "master",
     "ADMIN_USERNAME": "admin",
