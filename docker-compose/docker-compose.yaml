@@ -15,7 +15,7 @@ services:
   frontend:
     image: pm4ml/mojaloop-payment-manager-ui:1.10.1
     environment:
-      - API_BASE_URL=http://localhost:4010
+      - API_BASE_URL=http://35.166.175.125:4010
     ports:
        - "8081:8080"
     depends_on:
@@ -54,9 +54,9 @@ services:
       - AUTH_CLIENT_ID=pm4ml-customer-ui
       - AUTH_CLIENT_SECRET=a857e3d7-ebd4-4451-aabd-bcb480dde1a3
       - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
-      - AUTH_LOGGED_IN_LANDING_URL=http://localhost:8081/
+      - AUTH_LOGGED_IN_LANDING_URL=http://35.166.175.125:8081/
       - AUTH_REDIRECT_NAME=pm4ml-customer-ui
-      - AUTH_REDIRECT_URI=http://localhost:4010/auth
+      - AUTH_REDIRECT_URI=http://35.166.175.125:4010/auth
       - AUTH_RESOURCE_NAME=pm4ml-customer-ui
       - AUTH_SCOPES=roles
       - DFSP_ID={{ CHANGE BEFORE INSTALL }}
@@ -253,7 +253,7 @@ services:
     ports:
       - "6060:6060"
     environment:
-      - API_BASE_URL=http://localhost:5050
+      - API_BASE_URL=http://35.166.175.125:5050
       - AUTH_ENABLED=FALSE
     command:
       - sh

@@ -7,17 +7,17 @@
       {
         "method": "put",
         "path": "/parties/{Type}/{ID}",
-        "endpoint": "http://localhost:4002"
+        "endpoint": "http://35.166.175.125:4002"
       },
       {
         "method": "put",
         "path": "/quotes/{ID}",
-        "endpoint": "http://localhost:3002"
+        "endpoint": "http://35.166.175.125:3002"
       },
       {
         "method": "put",
         "path": "/transfers/{ID}",
-        "endpoint": "http://localhost:3000"
+        "endpoint": "http://35.166.175.125:3000"
       }
     ]
   },
