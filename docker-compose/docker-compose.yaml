@@ -212,7 +212,7 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT=mojaloop-testing-toolkit:5000
+      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -238,18 +238,18 @@ services:
       - redis
 
   mojaloop-testing-toolkit:
-    image: mojaloop/ml-testing-toolkit:v13.5.2
+    image: mojaloop/ml-testing-toolkit:v15.7.0
     volumes:
       - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
     ports:
-      - "5000:5000"
+      - "4040:4040"
       - "5050:5050"
     command:
       - sh
       - -c
       - "npm start"
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v13.5.3
+    image: mojaloop/ml-testing-toolkit-ui:v15.1.3
     ports:
       - "6060:6060"
     environment:

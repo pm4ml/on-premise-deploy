@@ -40,6 +40,7 @@
   "TRANSFERS_VALIDATION_WITH_PREVIOUS_QUOTES": true,
   "TRANSFERS_VALIDATION_ILP_PACKET": true,
   "TRANSFERS_VALIDATION_CONDITION": true,
+  "MONITORING_LOG_INCLUDE_PAYLOAD": true,
   "ILP_SECRET": "secret",
   "VERSIONING_SUPPORT_ENABLE": true,
   "VALIDATE_INBOUND_JWS": false,
@@ -99,5 +100,10 @@
       "description": "tests related to quoting service",
       "color": "blue"
     }
-  ]
+  ],
+  "INSTANCE_NAME": "Mojaloop Testing Toolkit",
+  "UI_THEME": {
+    "HEADER_COLOR": "rgb(41, 62, 93)",
+    "TITLE_COLOR": "#fff"
+  }
 }
