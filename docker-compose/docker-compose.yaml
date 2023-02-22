@@ -13,7 +13,7 @@ version: '3'
 services:
 
   frontend:
-    image: pm4ml/mojaloop-payment-manager-ui:1.10.0
+    image: pm4ml/mojaloop-payment-manager-ui:1.10.1
     environment:
       - API_BASE_URL=http://localhost:4010
     ports:
@@ -28,24 +28,14 @@ services:
       - KEYCLOAK_PASSWORD=admin
       - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
-#      - DB_VENDOR=postgres
-#      - DB_ADDR=keycloak-postgresql
-#      - DB_PORT=5432
-#      - DB_DATABASE=keycloak
-#      - DB_USER=keycloak
-#      - DB_PASSWORD={{ CHANGE BEFORE INSTALL }}
+      - DB_VENDOR=h2
     volumes:
       - ./keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
       - "8080:8080"
-#    depends_on:
-#      - keycloak-postgres
-
-#  keycloak-postgres:
-#    image: bitnami/postgresql:11.12.0-debian-10-r23
 
   experience-api:
-    image: pm4ml/mojaloop-payment-manager-experience-api:1.9.1
+    image: pm4ml/mojaloop-payment-manager-experience-api:2.0.3
     ports:
       - "4010:3000"
     environment:
@@ -71,7 +61,7 @@ services:
       - redis
 
   management-api:
-    image: pm4ml/mojaloop-payment-manager-management-api:2.0.0
+    image: pm4ml/mojaloop-payment-manager-management-api:2.0.4
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
@@ -80,10 +70,8 @@ services:
       - CACHE_SYNC_INTERVAL_SECONDS=10
       - DFSP_CA_PATH=/secrets
       - DFSP_CA_PATH=/tlsServerCA.pem
-      # - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
       - DFSP_CSR_KEY=a
       - DFSP_ID=dfsp1
-      # - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
       - ENV_ID=1
       - MCM_API_TOKEN={{ REQUIRED BEFORE INSTALL }}
       - MCM_CLIENT_REFRESH_INTERVAL=180000
@@ -104,12 +92,24 @@ services:
       - tlsServerCAPath=/tlsServerCA.pem
       - tlsServerCSRParametersPath=/resources/tlsServerCSRParameters.json
       - tlsServerPvtKeyPath=/tlsServerPvtKey.key
+      - VAULT_ENDPOINT=http://vault-dev:8233
+      - VAULT_PKI_BASE_DOMAIN=example.com
+      - VAULT_AUTH_METHOD=APP_ROLE
+      - VAULT_ROLE_ID_FILE=/vault/role-id
+      - VAULT_ROLE_SECRET_ID_FILE=/vault/secret-id
+
     volumes:
       - "/tmp/secrets:/secrets"
+      - ./vault/tmp:/vault
     depends_on:
-      - redis
-      - keycloak
-      - mojaloop-connector
+      redis:
+        condition: service_started
+      keycloak:
+        condition: service_started
+      mojaloop-connector:
+        condition: service_started
+      vault-dev:
+        condition: service_healthy
 
   prometheus:
     image: prom/prometheus:latest
@@ -117,7 +117,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
-    # image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.5
     image: pm4ml/wallet-core-connector:1.0.11
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3000
@@ -127,19 +126,6 @@ services:
     depends_on:
       - mojaloop-connector
       - sim-backend
-      
-#   core-connector:
-#     image: pm4ml/dgto-pm4ml-core-connector:0.0.20
-#     environment:
-#       - BACKEND_ENDPOINT=http://sim-backend:3002
-#       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
-#     ports:
-#        - "3003:3003"
-#     extra_hosts:
-#       - "dgtof-saccos.co.tz:192.168.10.110"
-#     depends_on:
-#       - mojaloop-connector
-#       - sim-backend
 
   sim-backend:
     image: "mojaloop/mojaloop-simulator:v11.3.0"
@@ -172,8 +158,8 @@ services:
   mojaloop-connector:
     image: pm4ml/mojaloop-connector:14.1.1
     environment:
-      - AUTO_ACCEPT_PARTY=false
-      - AUTO_ACCEPT_QUOTES=false
+      - AUTO_ACCEPT_PARTY=true
+      - AUTO_ACCEPT_QUOTES=true
       - BACKEND_ENDPOINT=simulator-core-connector:3003
       - CACHE_HOST=redis
       - CACHE_PORT=6379
@@ -195,7 +181,7 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT=mojaloop-testing-toolkit:5000
+      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -221,18 +207,18 @@ services:
       - redis
 
   mojaloop-testing-toolkit:
-    image: mojaloop/ml-testing-toolkit:v13.5.2
+    image: mojaloop/ml-testing-toolkit:v15.7.0
     volumes:
-      - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/mojaloop-testing-toolkit/spec_files"
+      - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/app/spec_files"
     ports:
-      - "5000:5000"
+      - "4040:4040"
       - "5050:5050"
     command:
       - sh
       - -c
       - "npm start"
   mojaloop-testing-toolkit-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v13.5.3
+    image: mojaloop/ml-testing-toolkit-ui:v15.1.3
     ports:
       - "6060:6060"
     environment:
@@ -241,8 +227,26 @@ services:
     command:
       - sh
       - /usr/share/nginx/start.sh
-
+  vault-dev:
+    image: vault:1.2.1
+    restart: always
+    container_name: vault-dev
+    environment:
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8233
+      VAULT_ADDR: http://127.0.0.1:8233
+      VAULT_DEV_ROOT_TOKEN_ID: "myroot"
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
+    ports:
+      - "8233:8233"
+    volumes:
+      - ./vault/tmp:/vault/tmp
+      - ./vault/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/service_started"]
+      timeout: 1s
+      retries: 20
 networks:
   default:
     name: payment-manager
-
