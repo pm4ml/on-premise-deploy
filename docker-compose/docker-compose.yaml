@@ -29,21 +29,10 @@ services:
       - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
       - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
       - DB_VENDOR=h2
-#      - DB_VENDOR=postgres
-#      - DB_ADDR=keycloak-postgresql
-#      - DB_PORT=5432
-#      - DB_DATABASE=keycloak
-#      - DB_USER=keycloak
-#      - DB_PASSWORD={{ CHANGE BEFORE INSTALL }}
     volumes:
       - ./keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
       - "8080:8080"
-#    depends_on:
-#      - keycloak-postgres
-
-#  keycloak-postgres:
-#    image: bitnami/postgresql:11.12.0-debian-10-r23
 
   experience-api:
     image: pm4ml/mojaloop-payment-manager-experience-api:2.0.3
@@ -73,7 +62,6 @@ services:
 
   management-api:
     image: pm4ml/mojaloop-payment-manager-management-api:2.0.4
-    # image: mojaloop-payment-manager-management-api:local
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
@@ -82,10 +70,8 @@ services:
       - CACHE_SYNC_INTERVAL_SECONDS=10
       - DFSP_CA_PATH=/secrets
       - DFSP_CA_PATH=/tlsServerCA.pem
-      # - DFSP_CLIENT_CSR_PARAMETERS=/resources/tlsClientCSRParameters.json
       - DFSP_CSR_KEY=a
       - DFSP_ID=dfsp1
-      # - DFSP_SERVER_CSR_PARAMETERS=/resources/tlsServerCSRParameters.json
       - ENV_ID=1
       - MCM_API_TOKEN={{ REQUIRED BEFORE INSTALL }}
       - MCM_CLIENT_REFRESH_INTERVAL=180000
@@ -111,8 +97,6 @@ services:
       - VAULT_AUTH_METHOD=APP_ROLE
       - VAULT_ROLE_ID_FILE=/vault/role-id
       - VAULT_ROLE_SECRET_ID_FILE=/vault/secret-id
-      # - VAULT_MOUNT_PKI=pki
-      # - VAULT_MOUNT_KV=secrets
 
     volumes:
       - "/tmp/secrets:/secrets"
@@ -133,7 +117,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   simulator-core-connector:
-    # image: pm4ml/mojaloop-payment-manager-simulator-core-connector:1.4.5
     image: pm4ml/wallet-core-connector:1.0.11
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3000
@@ -143,19 +126,6 @@ services:
     depends_on:
       - mojaloop-connector
       - sim-backend
-      
-#   core-connector:
-#     image: pm4ml/dgto-pm4ml-core-connector:0.0.20
-#     environment:
-#       - BACKEND_ENDPOINT=http://sim-backend:3002
-#       - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
-#     ports:
-#        - "3003:3003"
-#     extra_hosts:
-#       - "dgtof-saccos.co.tz:192.168.10.110"
-#     depends_on:
-#       - mojaloop-connector
-#       - sim-backend
 
   sim-backend:
     image: "mojaloop/mojaloop-simulator:v11.3.0"
@@ -187,7 +157,6 @@ services:
 
   mojaloop-connector:
     image: pm4ml/mojaloop-connector:14.1.1
-    # image: mojaloop-connector:local
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
