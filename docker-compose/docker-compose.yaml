@@ -4,16 +4,16 @@ version: '3'
 #  
 #  ┌────────────┐    ┌────────────┐   ┌─────────────┐    ┌──────────┐
 #  │            │    │            │   │             │    │          │
-#  │ Simulator  ├───►│ Simulator  ├──►│  Mojaloop   ├───►│  Switch  │
-#  │ Backend    │    │   Core     │   │  Connector  │    │          │
-#  │            │◄───┤ Connector  │◄──┤             │◄───┤          │
+#  │ Simulator  ├───►│ Simulator  ├──►│  SDK Scheme ├───►│  Switch  │
+#  │ Backend    │    │   Core     │   │    Adapter  │    │          │
+#  │   (TTK)    │◄───┤ Connector  │◄──┤             │◄───┤  (TTK)   │
 #  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
 #  
 
 services:
 
   frontend:
-    image: pm4ml/mojaloop-payment-manager-ui:1.10.1
+    image: pm4ml/mojaloop-payment-manager-ui:1.14.0
     environment:
       - API_BASE_URL=http://localhost:4010
     ports:
@@ -35,7 +35,7 @@ services:
       - "8080:8080"
 
   experience-api:
-    image: pm4ml/mojaloop-payment-manager-experience-api:2.0.3
+    image: pm4ml/mojaloop-payment-manager-experience-api:2.0.5
     ports:
       - "4010:3000"
     environment:
@@ -111,8 +111,6 @@ services:
         condition: service_started
       keycloak:
         condition: service_started
-      # sdk-scheme-adapter:
-      #   condition: service_started
       vault-dev:
         condition: service_healthy
 
@@ -124,7 +122,7 @@ services:
   simulator-core-connector:
     image: pm4ml/wallet-core-connector:1.0.11
     environment:
-      - BACKEND_ENDPOINT=http://sim-backend:3000
+      - BACKEND_ENDPOINT=http://sim-backend:4040
       - MLCONN_OUTBOUND_ENDPOINT=http://sdk-scheme-adapter:4001
     ports:
        - "3003:3003"
@@ -133,24 +131,26 @@ services:
       - sim-backend
 
   sim-backend:
-    image: "mojaloop/mojaloop-simulator:v11.3.0"
-    environment:
-      - CA_CERT_PATH=./secrets/cacert.pem
-      - DFSP_ID=dfsp1
-      - FEE_MULTIPLIER=0.0
-      - HTTPS_ENABLED=false
-      - LOG_INDENT=0
-      - MODEL_DATABASE=./model.sqlite
-      - MUTUAL_TLS_ENABLED=false
-      - OUTBOUND_ENDPOINT=http://simulator-core-connector:4001
-      - REPORT_API_LISTEN_PORT=3002
-      # - RULES_FILE=../rules/rules.json
-      - SERVER_CERT_PATH=./secrets/servercert.pem
-      - SERVER_KEY_PATH=./secrets/serverkey.pem
-      - SIMULATOR_API_LISTEN_PORT=3000
-      - SQLITE_LOG_FILE=./log.sqlite
-      # - SQLITE_LOG_FILE=":memory:"
-      - TEST_API_LISTEN_PORT=3003
+    image: mojaloop/ml-testing-toolkit:v15.7.0
+    volumes:
+      - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
+    ports:
+      - "5051:5050"
+    command:
+      - sh
+      - -c
+      - "npm start"
+  # NOTE: The following UI for sim backend can be enabled for debugging purpose
+  # sim-backend-ui:
+  #   image: mojaloop/ml-testing-toolkit-ui:v15.1.3
+  #   ports:
+  #     - "6061:6060"
+  #   environment:
+  #     - API_BASE_URL=http://localhost:5051
+  #     - AUTH_ENABLED=FALSE
+  #   command:
+  #     - sh
+  #     - /usr/share/nginx/start.sh
 
   redis:
     image: redis:6.2.4-alpine
