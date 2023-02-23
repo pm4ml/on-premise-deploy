@@ -28,6 +28,6 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
 
-  - job_name: 'mojaloop-connector'
+  - job_name: 'sdk-scheme-adapter'
     static_configs:
     - targets: ['scheme-adapter-sim:4004']

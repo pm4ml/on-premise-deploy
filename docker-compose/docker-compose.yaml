@@ -61,7 +61,7 @@ services:
       - redis
 
   management-api:
-    image: pm4ml/mojaloop-payment-manager-management-api:2.0.4
+    image: pm4ml/mojaloop-payment-manager-management-api:4.0.16
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
@@ -84,7 +84,7 @@ services:
       - TLS_SERVER_PRIVATE_KEY=/tlsServerPvtKey.key
       - TLS_SERVER_PRIVATE_KEY=a
       - WS_PORT=4003
-      - WS_URL=mojaloop-connector
+      - WS_URL=sdk-scheme-adapter
       - dfspCsrPrivateKeyAlgorithm=rsa
       - dfspCsrPrivateKeyLength=4096
       - p12PassPhrase=SOME_S3C4R3_P@SS
@@ -97,6 +97,11 @@ services:
       - VAULT_AUTH_METHOD=APP_ROLE
       - VAULT_ROLE_ID_FILE=/vault/role-id
       - VAULT_ROLE_SECRET_ID_FILE=/vault/secret-id
+      - VAULT_PKI_SERVER_ROLE=server-role
+      - VAULT_PKI_CLIENT_ROLE=client-role
+      - VAULT_MOUNT_PKI=pki
+      - VAULT_MOUNT_KV=secrets
+      - CERT_MANAGER_ENABLED=false
 
     volumes:
       - "/tmp/secrets:/secrets"
@@ -106,8 +111,8 @@ services:
         condition: service_started
       keycloak:
         condition: service_started
-      mojaloop-connector:
-        condition: service_started
+      # sdk-scheme-adapter:
+      #   condition: service_started
       vault-dev:
         condition: service_healthy
 
@@ -120,11 +125,11 @@ services:
     image: pm4ml/wallet-core-connector:1.0.11
     environment:
       - BACKEND_ENDPOINT=http://sim-backend:3000
-      - MLCONN_OUTBOUND_ENDPOINT=http://mojaloop-connector:4001
+      - MLCONN_OUTBOUND_ENDPOINT=http://sdk-scheme-adapter:4001
     ports:
        - "3003:3003"
     depends_on:
-      - mojaloop-connector
+      - sdk-scheme-adapter
       - sim-backend
 
   sim-backend:
@@ -155,14 +160,19 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_TLS_ENABLED=no
 
-  mojaloop-connector:
-    image: pm4ml/mojaloop-connector:14.1.1
+  sdk-scheme-adapter:
+    image: mojaloop/sdk-scheme-adapter:v22.0.0
+    command:
+    - sh
+    - -c
+    - "yarn start:api-svc"
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
       - BACKEND_ENDPOINT=simulator-core-connector:3003
       - CACHE_HOST=redis
       - CACHE_PORT=6379
+      - CACHE_URL=redis://redis:6379
       - DFSP_ID=dfsp1
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
@@ -176,6 +186,7 @@ services:
       - METRICS_SERVER_LISTEN_PORT=4004
       - MULTIPLE_PARTIES_RESPONSE=false
       - MGMT_API_WS_URL=management-api
+      - MGMT_API_WS_PORT=4005
       - OUTBOUND_LISTEN_PORT=4001
       - OUTBOUND_MUTUAL_TLS_ENABLED=false
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
@@ -193,7 +204,10 @@ services:
       # - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
       - VALIDATE_INBOUND_JWS=false
       - RESERVE_NOTIFICATION=false
-#      - RESOURCE_VERSIONS="transfers=1.1"
+      # - RESOURCE_VERSIONS="transfers=1.1"
+      - PM4ML_ENABLED=true
+      - ENABLE_BACKEND_EVENT_HANDLER=false
+      - ENABLE_FSPIOP_EVENT_HANDLER=false
     ports:
       - "4000:4000"
     volumes:
@@ -203,8 +217,16 @@ services:
       - ./inbound-cacert.pem:/secrets/inbound-cacert.pem
       - ./inbound-cert.pem:/secrets/inbound-cert.pem
       - ./inbound-key.pem:/secrets/inbound-key.pem
+      - ./secrets/jwsSigningKey.key:/jwsSigningKey.key
+      - ./secrets/jwsVerificationKeys:/jwsVerificationKeys
+    restart: always
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      management-api:
+        condition: service_started
+      # management-api:
+      #   condition: service_healthy
 
   mojaloop-testing-toolkit:
     image: mojaloop/ml-testing-toolkit:v15.7.0
