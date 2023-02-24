@@ -100,6 +100,27 @@ curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charse
 ```
 - You should get the response with transfer state as 'COMMITTED' and you should also able to see the request in TTK monitoring page
 
+### Testing 3-phase outbound transfer from core-connector
+
+In the above section the transfer is successful with a single HTTP call because the parameters `AUTO_ACCEPT_PARTY` and `AUTO_ACCEPT_QUOTES` are set to true in sdk-scheme-adapter section of `docker-compose.yaml` file.
+If we want to give an option to the end user (Sender) to approve the party and then approve the quote, then we need to set these parameters to false and make 3 consecutive http calls to make the transfer successful. Please following the following steps for this scenario.
+- Set the parameters `AUTO_ACCEPT_PARTY` and `AUTO_ACCEPT_QUOTES` to false
+- Restart the docker-compose with the commands `docker-compose down` and `docker-compose up`
+- Send the above `POST /transfers` request and observe the response
+- This time it only contains the party information and you don't see the transferState in the response
+- Note down the transferId from the response
+- Then to accept party, the following HTTP call should be made
+```
+ curl -X PUT 'http://localhost:4001/transfers/TRANSFERID_HERE' -H 'content-type: application/json;charset=utf-8' --data-binary '{"acceptParty": true}'
+```
+- Now you will get the quote information in the response
+- To accept quote, the following HTTP call should be made
+```
+ curl -X PUT 'http://localhost:4001/transfers/TRANSFERID_HERE' -H 'content-type: application/json;charset=utf-8' --data-binary '{"acceptQuote": true}'
+```
+- You should finally see the transferState as `COMMITTED` in the response
+
+
 ### Testing inbound transfer to core-connector
 
 - For inbound transfer, you need to configure `sdk-scheme-adapter` to point to your core connector hostname and IP to send HTTP calls
@@ -111,4 +132,4 @@ curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charse
   - If the above hostnames do not work for you, you need to find out the IP of docker interface (Ex: ``)
 - Start the services using `docker-compose up` by following the first section in this document
 - Send a transfer from TTK by following the section `Sending transfer to core connector simulator acting as payee`
-- The testcase should be successfull and you should get an inbound HTTP request on your core connector implementation.
+- The testcase should be successful and you should get an inbound HTTP request on your core connector implementation.
