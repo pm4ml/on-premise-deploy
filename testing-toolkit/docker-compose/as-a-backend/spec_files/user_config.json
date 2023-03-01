@@ -1,25 +1,9 @@
 {
   "VERSION": 1,
-  "CALLBACK_ENDPOINT": "http://sdk-scheme-adapter:4000",
+  "CALLBACK_ENDPOINT": "http://simulator-core-connector:3003",
   "CALLBACK_RESOURCE_ENDPOINTS": {
     "enabled": false,
-    "endpoints": [
-      {
-        "method": "put",
-        "path": "/parties/{Type}/{ID}",
-        "endpoint": "http://localhost:4002"
-      },
-      {
-        "method": "put",
-        "path": "/quotes/{ID}",
-        "endpoint": "http://localhost:3002"
-      },
-      {
-        "method": "put",
-        "path": "/transfers/{ID}",
-        "endpoint": "http://localhost:3000"
-      }
-    ]
+    "endpoints": []
   },
   "HUB_ONLY_MODE": false,
   "ENDPOINTS_DFSP_WISE": {
@@ -83,25 +67,9 @@
     "TEST_CASES_REPO_HUB_GP_PATH": "collections/hub/golden_path",
     "TEST_CASES_REPO_HUB_PROVISIONING_PATH": "collections/hub/provisioning"
   },
-  "DEFAULT_ENVIRONMENT_FILE_NAME": "hub_local_environment.json",
-  "LABELS": [
-    {
-      "name": "p2p",
-      "description": "tests related to p2p transfer",
-      "color": "red"
-    },
-    {
-      "name": "settlements",
-      "description": "tests related to settlements",
-      "color": "green"
-    },
-    {
-      "name": "quotes",
-      "description": "tests related to quoting service",
-      "color": "blue"
-    }
-  ],
-  "INSTANCE_NAME": "Mojaloop Testing Toolkit",
+  "DEFAULT_ENVIRONMENT_FILE_NAME": "dfsp_local_environment.json",
+  "LABELS": [],
+  "INSTANCE_NAME": "Backend Simulator",
   "UI_THEME": {
     "HEADER_COLOR": "rgb(41, 62, 93)",
     "TITLE_COLOR": "#fff"

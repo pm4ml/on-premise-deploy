@@ -161,11 +161,14 @@
           "exec": [
             "const quoteBody = JSON.parse(request.body)",
             "environment.quoteTransferAmount = quoteBody.amount.amount",
-            "environment.quotePayeeFspFee = 0.2",
-            "environment.quotePayeeFspCommission = 0.3",
+            "environment.quotePayeeFspFee = 0.5",
+            "environment.quotePayeeFspCommission = 0.2",
             "environment.quotePayeeReceiveAmount = quoteBody.amount.amount",
             "if (quoteBody.amountType === 'RECEIVE') {",
-            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
+            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee - environment.quotePayeeFspCommission",
+            "}",
+            "if (quoteBody.amountType === 'SEND') {",
+            "  environment.quotePayeeReceiveAmount = (+quoteBody.amount.amount) - environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
             "}",
             "environment.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
           ],
@@ -423,8 +426,6 @@
     }
   },
   {
-    "type": "callback",
-    "version": 1,
     "ruleId": 10,
     "priority": 1,
     "description": "post /participants",
@@ -451,10 +452,38 @@
     "event": {
       "method": "put",
       "path": "/participants/{ID}",
-      "params": {},
+      "params": {
+        "scripts": {
+          "exec": [
+            "",
+            "const reqBody = JSON.parse(request.body)",
+            "const partyList = reqBody.partyList.map(party => ({",
+            "  partyId: party",
+            "}))",
+            "",
+            "custom.appendEventBody({",
+            "  partyList,",
+            "  currency: reqBody.currency",
+            "})",
+            ""
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "partyList": [],
+          "currency": "USD"
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.participants+json;version=1.1",
+          "Date": "{$function.generic.curDate}",
+          "FSPIOP-Source": "{$config.FSPID}"
+        }
+      },
       "delay": 0,
-      "type": "MOCK_CALLBACK"
-    }
+      "type": "FIXED_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
   },
   {
     "type": "callback",
