@@ -161,11 +161,14 @@
           "exec": [
             "const quoteBody = JSON.parse(request.body)",
             "environment.quoteTransferAmount = quoteBody.amount.amount",
-            "environment.quotePayeeFspFee = 0.2",
-            "environment.quotePayeeFspCommission = 0.3",
+            "environment.quotePayeeFspFee = 0.5",
+            "environment.quotePayeeFspCommission = 0.2",
             "environment.quotePayeeReceiveAmount = quoteBody.amount.amount",
             "if (quoteBody.amountType === 'RECEIVE') {",
-            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
+            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee - environment.quotePayeeFspCommission",
+            "}",
+            "if (quoteBody.amountType === 'SEND') {",
+            "  environment.quotePayeeReceiveAmount = (+quoteBody.amount.amount) - environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
             "}",
             "environment.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
           ],
