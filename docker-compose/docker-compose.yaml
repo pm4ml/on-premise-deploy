@@ -193,6 +193,7 @@ services:
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
       - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
+      - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -231,6 +232,7 @@ services:
 
   mojaloop-testing-toolkit:
     image: mojaloop/ml-testing-toolkit:v15.7.0
+    user: root
     volumes:
       - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/app/spec_files"
     ports:
