@@ -1,9 +1,9 @@
 {
-  "name": "Send Money Auto Acceptance",
+  "name": "Tests for sendmoney with AUTO ACCEPT flags set to true",
   "test_cases": [
     {
       "id": 1,
-      "name": "Send Money Auto Acceptance",
+      "name": "Transfer Money Auto Acceptance with SEND type",
       "requests": [
         {
           "id": 1,
@@ -153,7 +153,7 @@
                 "id": 5,
                 "description": "Quotes Response should contain payee receive amount",
                 "exec": [
-                  "expect(response.body.quoteResponse.body.payeeReceiveAmount.amount).to.equal(${inputs.currency})",
+                  "expect(response.body.quoteResponse.body.payeeReceiveAmount.amount).to.equal(environment.amount)",
                   ""
                 ]
               },
@@ -175,7 +175,7 @@
                 "",
                 "var payeeFspCommission = response.body.quoteResponse.body.payeeFspCommission.amount",
                 "",
-                "environment.expectedTransferAmount = inputs.amount + payeeFspFee - payeeFspCommission"
+                "environment.expectedTransferAmount = (Number(environment.amount) + Number(payeeFspFee) - Number(payeeFspCommission)).toString() "
               ]
             }
           }
