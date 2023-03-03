@@ -82,6 +82,105 @@
           }
         }
       ]
+    },
+    {
+      "id": 2,
+      "name": "Transfer Money Auto Acceptance with RECEIVE type",
+      "requests": [
+        {
+          "id": 1,
+          "description": "Send Money",
+          "apiVersion": {
+            "minorVersion": 4,
+            "majorVersion": 1,
+            "type": "payment_manager"
+          },
+          "operationPath": "/sendmoney",
+          "path": "/sendmoney",
+          "method": "post",
+          "url": "http://simulator-core-connector:3003",
+          "ignoreCallbacks": true,
+          "body": {
+            "from": {
+              "displayName": "PayerFirst PayerLast",
+              "idType": "MSISDN",
+              "idValue": "{$inputs.payerIdentifier}"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$inputs.payeeIdentifier}"
+            },
+            "amountType": "RECEIVE",
+            "currency": "{$inputs.currency}",
+            "amount": "{$inputs.amount}",
+            "transactionType": "TRANSFER",
+            "note": "test payment",
+            "homeTransactionId": "{$function.generic.generateUUID}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Status is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Current state should be Completed",
+                "exec": [
+                  "expect(response.body.currentState).to.equal('COMPLETED')"
+                ]
+              },
+              {
+                "id": 3,
+                "description": "Quotes Response should contain payee fsp fee",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.payeeFspFee.amount).to.equal('0.5')",
+                  ""
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Quotes Response should contain payee fsp commission",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.payeeFspCommission.amount).to.equal('0.2')",
+                  ""
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Quotes Response should contain payee receive amount",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.payeeReceiveAmount.amount).to.equal(${inputs.currency})",
+                  ""
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Quotes Response should contain updated transfer amount taking payee fsp fee, comminssion into account",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.transferAmount.amount).to.equal(environment.expectedTransferAmount)",
+                  ""
+                ]
+              }
+            ]
+          },
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "var payeeFspFee = response.body.quoteResponse.body.payeeFspFee.amount",
+                "",
+                "var payeeFspCommission = response.body.quoteResponse.body.payeeFspCommission.amount",
+                "",
+                "environment.expectedTransferAmount = inputs.amount + payeeFspFee - payeeFspCommission"
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
