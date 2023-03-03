@@ -53,9 +53,33 @@
               },
               {
                 "id": 3,
-                "description": "Should get incoming parties",
+                "description": "Quotes Response should contain payee fsp fee",
                 "exec": [
-                  "expect(requestVariables.partiesRequest).to.not.equal(null)",
+                  "expect(response.body.quoteResponse.body.payeeFspFee.amount).to.equal('0.5')",
+                  ""
+                ]
+              },
+              {
+                "id": 4,
+                "description": "Quotes Response should contain payee fsp commission",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.payeeFspCommission.amount).to.equal('0.2')",
+                  ""
+                ]
+              },
+              {
+                "id": 5,
+                "description": "Quotes Response should contain updated payee receive amount taking payee fsp fee, comminssion into account",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.payeeReceiveAmount.amount).to.equal(environment.expectedPayeeReceiveAmount)",
+                  ""
+                ]
+              },
+              {
+                "id": 6,
+                "description": "Quotes Response should contain transfer amount same as input amoount",
+                "exec": [
+                  "expect(response.body.quoteResponse.body.transferAmount.amount).to.equal(environment.amount)",
                   ""
                 ]
               }
@@ -63,20 +87,13 @@
           },
           "scriptingEngine": "javascript",
           "scripts": {
-            "preRequest": {
-              "exec": [
-                "await inboundEvent.addListener('parties1', 'get', '/parties/MSISDN/{$inputs.payeeIdentifier}')",
-                "",
-                "// await inboundEvent.addListener('quotes1', 'post', '/quotes', (headers, body) => {",
-                "//   return body.quoteId === '<SOME_ID_HERE>'",
-                "// })",
-                ""
-              ]
-            },
             "postRequest": {
               "exec": [
-                "requestVariables.partiesRequest = await inboundEvent.getMessage('parties1')",
-                ""
+                "var payeeFspFee = response.body.quoteResponse.body.payeeFspFee.amount",
+                "",
+                "var payeeFspCommission = response.body.quoteResponse.body.payeeFspCommission.amount",
+                "",
+                "environment.expectedPayeeReceiveAmount = (Number(environment.amount) - Number(payeeFspFee) + Number(payeeFspCommission)).toString() "
               ]
             }
           }
