@@ -61,7 +61,7 @@ services:
       - redis
 
   management-api:
-    image: pm4ml/mojaloop-payment-manager-management-api:4.1.0-snapshot.1
+    image: pm4ml/mojaloop-payment-manager-management-api:4.1.0-snapshot.8
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
