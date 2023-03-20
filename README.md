@@ -63,7 +63,7 @@ In the `Monitoring` page opened before, you can see the logs.
 ### Initiate a transfer from TTK
 
 * Open the menu item `Test Runner` in TTK UI in a new tab.
-* Click on `Collection Manager` button and import the file 'testing-toolkit/collections/payer-tests/sendmoney.json'
+* Click on `Collection Manager` button and import the file 'testing-toolkit/collections/payer-tests/sendmoney_auto_acceptance.json'
 * Click on `Send` button
 * You should see the test run successful
 * Click on the edit button against the test case and observe the request sent and response received
