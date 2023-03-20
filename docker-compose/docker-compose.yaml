@@ -61,13 +61,14 @@ services:
       - redis
 
   management-api:
-    image: pm4ml/mojaloop-payment-manager-management-api:4.0.16
+    image: pm4ml/mojaloop-payment-manager-management-api:4.1.0
     environment:
       - AUTH_ENABLED=false
       - AUTH_PASS=pm4mltest123
       - AUTH_USER=pm4mltest
       - CACHE_HOST=redis
       - CACHE_SYNC_INTERVAL_SECONDS=10
+      - CACHE_URL=redis://redis:6379
       - DFSP_CA_PATH=/secrets
       - DFSP_CA_PATH=/tlsServerCA.pem
       - DFSP_CSR_KEY=a
@@ -104,7 +105,7 @@ services:
       - CERT_MANAGER_ENABLED=false
 
     volumes:
-      - "/tmp/secrets:/secrets"
+      # - "/tmp/secrets:/secrets"
       - ./vault/tmp:/vault
     depends_on:
       redis:
@@ -169,7 +170,7 @@ services:
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
-      - BACKEND_ENDPOINT=simulator-core-connector:3003
+      - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - CACHE_URL=redis://redis:6379
