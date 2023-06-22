@@ -12,7 +12,11 @@
     "userSettings": 1
   },
   "DB": {
-    "URI": "mongodb://ttk:ttk@localhost:27017/ttk"
+    "HOST": "localhost",
+    "PORT": 27017,
+    "USER": "ttk",
+    "PASSWORD": "ttk",
+    "DATABASE": "ttk"
   },
   "OAUTH": {
     "AUTH_ENABLED": false,
@@ -134,5 +138,9 @@
   "SOCKET_IO_ENGINE_OPTIONS": {
     "pingInterval": 25000,
     "pingTimeout": 300000
-  }
+  },
+  "CORS_WHITELIST": [
+    "http://localhost:6060"
+  ],
+  "ALLOW_CREDENTIALS": true
 }
