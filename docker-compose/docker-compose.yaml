@@ -238,6 +238,13 @@ services:
     user: root
     volumes:
       - "../testing-toolkit/docker-compose/as-a-switch/spec_files:/opt/app/spec_files"
+    environment:
+      TTK_SYSTEM_CONFIG: |-
+        {
+          "CORS_WHITELIST": [
+            "http://localhost:6060"
+          ]
+        }
     ports:
       - "4040:4040"
       - "5050:5050"
