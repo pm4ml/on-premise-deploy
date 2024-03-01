@@ -4,9 +4,9 @@ version: '3'
 #  
 #  ┌────────────┐    ┌────────────┐   ┌─────────────┐    ┌──────────┐
 #  │            │    │            │   │             │    │          │
-#  │ Simulator  ├───►│ Simulator  ├──►│  SDK Scheme ├───►│  Switch  │
-#  │ Backend    │    │   Core     │   │    Adapter  │    │          │
-#  │   (TTK)    │◄───┤ Connector  │◄──┤             │◄───┤  (TTK)   │
+#  │ Core       ├───►│ SDK Scheme ├──►│  SDK Scheme ├───►│  Core    │
+#  │ Connector  │    │   Adapter2 │   │    Adapter1 │    │ Connector│
+#  │   (Airtel) │◄───┤   (Airtel) │◄──┤  (Merchant) │    |(Merchant)|
 #  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
 #  
 
@@ -120,27 +120,27 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
-  simulator-core-connector:
-    image: pm4ml/wallet-core-connector:1.0.11
-    environment:
-      - BACKEND_ENDPOINT=http://sim-backend:4040
-      - MLCONN_OUTBOUND_ENDPOINT=http://sdk-scheme-adapter:4001
-    ports:
-       - "3003:3003"
-    depends_on:
-      - sdk-scheme-adapter
-      - sim-backend
+  # simulator-core-connector:
+  #   image: pm4ml/wallet-core-connector:1.0.11
+  #   environment:
+  #     - BACKEND_ENDPOINT=http://sim-backend:4040
+  #     - MLCONN_OUTBOUND_ENDPOINT=http://sdk-scheme-adapter:4001
+  #   ports:
+  #      - "3003:3003"
+  #   depends_on:
+  #     - sdk-scheme-adapter
+  #     - sim-backend
 
-  sim-backend:
-    image: mojaloop/ml-testing-toolkit:v15.7.0
-    volumes:
-      - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
-    ports:
-      - "5051:5050"
-    command:
-      - sh
-      - -c
-      - "npm start"
+  # sim-backend:
+  #   image: mojaloop/ml-testing-toolkit:v15.7.0
+  #   volumes:
+  #     - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
+  #   ports:
+  #     - "5051:5050"
+  #   command:
+  #     - sh
+  #     - -c
+  #     - "npm start"
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   # sim-backend-ui:
   #   image: mojaloop/ml-testing-toolkit-ui:v15.1.3
@@ -161,8 +161,8 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_TLS_ENABLED=no
 
-  sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v22.0.0
+  sdk-scheme-adapter1:
+    image: mojaloop/sdk-scheme-adapter:v23.4.0
     command:
     - sh
     - -c
@@ -170,10 +170,8 @@ services:
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
-      - BACKEND_ENDPOINT=sim-backend:4040
-      - CACHE_HOST=redis
-      - CACHE_PORT=6379
-      - CACHE_URL=redis://redis:6379
+      - BACKEND_ENDPOINT=merchant-ccc-here
+      - CACHE_URL=redis://redis:6379/1
       - DFSP_ID=dfsp1
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
@@ -193,8 +191,8 @@ services:
       - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
       - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
-      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
-      - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
+      - PEER_ENDPOINT=sdk-scheme-adapter2:4000
+      - ALS_ENDPOINT=sdk-scheme-adapter2:4000
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -210,9 +208,83 @@ services:
       - PM4ML_ENABLED=true
       - ENABLE_BACKEND_EVENT_HANDLER=false
       - ENABLE_FSPIOP_EVENT_HANDLER=false
+      - AUTO_ACCEPT_R2P_PARTY=false
+      - AUTO_ACCEPT_R2P_BUSINESS_QUOTES=false
+      - AUTO_ACCEPT_R2P_DEVICE_OTP=false
     ports:
-      - "4000:4000"
-      - "4001:4001"
+      - "14000:4000"
+      - "14001:4001"
+    volumes:
+      - ./outbound-cacert.pem:/secrets/outbound-cacert.pem
+      - ./outbound-cert.pem:/secrets/outbound-cert.pem
+      - ./outbound-key.pem:/secrets/outbound-key.pem
+      - ./inbound-cacert.pem:/secrets/inbound-cacert.pem
+      - ./inbound-cert.pem:/secrets/inbound-cert.pem
+      - ./inbound-key.pem:/secrets/inbound-key.pem
+      - ./secrets/jwsSigningKey.key:/jwsSigningKey.key
+      - ./secrets/jwsVerificationKeys:/jwsVerificationKeys
+    restart: always
+    depends_on:
+      redis:
+        condition: service_started
+      management-api:
+        condition: service_started
+      # management-api:
+      #   condition: service_healthy
+
+  sdk-scheme-adapter2:
+    image: mojaloop/sdk-scheme-adapter:v23.4.0
+    command:
+    - sh
+    - -c
+    - "yarn start:api-svc"
+    environment:
+      - AUTO_ACCEPT_PARTY=true
+      - AUTO_ACCEPT_QUOTES=true
+      - BACKEND_ENDPOINT=airtel-cc-here
+      - CACHE_URL=redis://redis:6379/2
+      - DFSP_ID=dfsp1
+      - ENABLE_TEST_FEATURES=true
+      - INBOUND_LISTEN_PORT=4000
+      - INBOUND_MUTUAL_TLS_ENABLED=false
+      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
+      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
+      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
+      - JWS_SIGN=false
+      - JWS_SIGNING_KEY_PATH=/jwsSigningKey.key
+      - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
+      - METRICS_SERVER_LISTEN_PORT=4004
+      - MULTIPLE_PARTIES_RESPONSE=false
+      - MGMT_API_WS_URL=management-api
+      - MGMT_API_WS_PORT=4005
+      - OUTBOUND_LISTEN_PORT=4001
+      - OUTBOUND_MUTUAL_TLS_ENABLED=false
+      - OUT_CA_CERT_PATH=/secrets/outbound-cacert.pem
+      - OUT_CLIENT_CERT_PATH=/secrets/outbound-cert.pem
+      - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
+      - PEER_ENDPOINT=sdk-scheme-adapter1:4000
+      - ALS_ENDPOINT=sdk-scheme-adapter1:4000
+      - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
+      - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
+      - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
+      - TEST_LISTEN_PORT=4002
+      - TEST_MUTUAL_TLS_ENABLED=false
+      - WS_PORT=4003
+      # - OAUTH_TOKEN_ENDPOINT={{ CHANGE BEFORE INSTALL e.g. https://extgw.dev.product.mbox-dev.io:9443/oauth2/token }}
+      # - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL e.g. k9edbgS09cE9qAkiVEaz5Hmuc5Ua }}
+      # - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
+      - VALIDATE_INBOUND_JWS=false
+      - RESERVE_NOTIFICATION=false
+      # - RESOURCE_VERSIONS="transfers=1.1"
+      - PM4ML_ENABLED=true
+      - ENABLE_BACKEND_EVENT_HANDLER=false
+      - ENABLE_FSPIOP_EVENT_HANDLER=false
+      - AUTO_ACCEPT_R2P_PARTY=false
+      - AUTO_ACCEPT_R2P_BUSINESS_QUOTES=false
+      - AUTO_ACCEPT_R2P_DEVICE_OTP=false
+    ports:
+      - "24000:4000"
+      - "24001:4001"
     volumes:
       - ./outbound-cacert.pem:/secrets/outbound-cacert.pem
       - ./outbound-cert.pem:/secrets/outbound-cert.pem
