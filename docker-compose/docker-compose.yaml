@@ -67,7 +67,7 @@ services:
       - APP_KEYS={{ CHANGE BEFORE INSTALL e.g. ootu1yoo5geeS7izai4ox1Yae1Eey6ai}}
       - AUTH_CLIENT_ID=pm4ml-customer-ui
       - AUTH_CLIENT_SECRET=a857e3d7-ebd4-4451-aabd-bcb480dde1a3
-      - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
+      - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/realms/pm4ml/.well-known/openid-configuration
       - AUTH_LOGGED_IN_LANDING_URL=http://localhost:8081/
       - AUTH_REDIRECT_NAME=pm4ml-customer-ui
       - AUTH_REDIRECT_URI=http://localhost:4010/auth
