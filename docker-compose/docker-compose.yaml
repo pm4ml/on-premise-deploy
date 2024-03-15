@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 #
 #  Component arrangement is as below:
 #  
@@ -20,6 +20,8 @@ services:
        - "8081:8080"
     depends_on:
       - experience-api
+    profiles:
+      - portal
 
   keycloak:
     image: quay.io/keycloak/keycloak:12.0.4
@@ -33,6 +35,8 @@ services:
       - ./keycloak-realm.json:/tmp/pm4ml-realm.json
     ports:
       - "8080:8080"
+    profiles:
+      - portal
 
   experience-api:
     image: pm4ml/mojaloop-payment-manager-experience-api:2.0.5
@@ -59,6 +63,8 @@ services:
       - management-api
       - keycloak
       - redis
+    profiles:
+      - portal
 
   management-api:
     image: pm4ml/mojaloop-payment-manager-management-api:4.1.0
@@ -114,22 +120,15 @@ services:
         condition: service_started
       vault-dev:
         condition: service_healthy
+    profiles:
+      - portal
 
   prometheus:
     image: prom/prometheus:latest
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-
-  simulator-core-connector:
-    image: pm4ml/wallet-core-connector:1.0.11
-    environment:
-      - BACKEND_ENDPOINT=http://sim-backend:4040
-      - MLCONN_OUTBOUND_ENDPOINT=http://sdk-scheme-adapter:4001
-    ports:
-       - "3003:3003"
-    depends_on:
-      - sdk-scheme-adapter
-      - sim-backend
+    profiles:
+      - portal
 
   sim-backend:
     image: mojaloop/ml-testing-toolkit:v15.7.0
@@ -207,7 +206,7 @@ services:
       - VALIDATE_INBOUND_JWS=false
       - RESERVE_NOTIFICATION=false
       # - RESOURCE_VERSIONS="transfers=1.1"
-      - PM4ML_ENABLED=true
+      - PM4ML_ENABLED=${PM4ML_ENABLED:-false}
       - ENABLE_BACKEND_EVENT_HANDLER=false
       - ENABLE_FSPIOP_EVENT_HANDLER=false
     ports:
@@ -273,6 +272,8 @@ services:
       test: ["CMD-SHELL", "test -f /tmp/service_started"]
       timeout: 1s
       retries: 20
+    profiles:
+      - portal
 networks:
   default:
     name: payment-manager
