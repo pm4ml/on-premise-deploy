@@ -225,8 +225,8 @@ services:
     depends_on:
       redis:
         condition: service_started
-      management-api:
-        condition: service_started
+      # management-api:
+      #   condition: service_started
       # management-api:
       #   condition: service_healthy
 
