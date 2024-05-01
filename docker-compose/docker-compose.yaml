@@ -130,16 +130,16 @@ services:
     profiles:
       - portal
 
-  sim-backend:
-    image: mojaloop/ml-testing-toolkit:v15.7.0
-    volumes:
-      - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
-    ports:
-      - "5051:5050"
-    command:
-      - sh
-      - -c
-      - "npm start"
+  # sim-backend:
+  #   image: mojaloop/ml-testing-toolkit:v15.7.0
+  #   volumes:
+  #     - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
+  #   ports:
+  #     - "5051:5050"
+  #   command:
+  #     - sh
+  #     - -c
+  #     - "npm start"
   
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   # sim-backend-ui:
@@ -154,18 +154,20 @@ services:
   #     - /usr/share/nginx/start.sh
 
   callback-handler-simulator-svc:
-    image: mojaloop/callback-handler-simulator-svc:v0.0.3
-    ## NOTE: Uncomment the following lines to override the container's config and handlers directories with local directories
+    image: mojaloop/callback-handler-simulator-svc:v0.0.4
     volumes:
-    - ../callback-handler/config:/opt/app/dist/config
-    # - ../callback-handler/handlers:/opt/app/dist/handlers
+    - ../callback-handler/config:/opt/app/config
+    ## NOTE: Uncomment the following line to override the container's handlers directory with custom handlers.
+    # - ../callback-handler/handlers:/opt/app/handlers
     ports:
       - "4041:4040"
     healthcheck:
-      test: wget -q http://localhost:3001/health -O /dev/null || exit 1
+      test: wget -q http://localhost:4040/health -O /dev/null || exit 1
       timeout: 20s
       retries: 30
       interval: 15s
+    environment:
+      - LOG_LEVEL=info
     user: root
     command:
       - sh
@@ -189,7 +191,7 @@ services:
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
-      - BACKEND_ENDPOINT=sim-backend:4040
+      - BACKEND_ENDPOINT=callback-handler-simulator-svc:4040/backend
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - CACHE_URL=redis://redis:6379
