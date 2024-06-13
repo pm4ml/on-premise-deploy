@@ -161,7 +161,7 @@ services:
       - REDIS_TLS_ENABLED=no
 
   sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v22.0.0
+    image: mojaloop/sdk-scheme-adapter:v23.4.0
     command:
     - sh
     - -c
