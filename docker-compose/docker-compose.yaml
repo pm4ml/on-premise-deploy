@@ -1,14 +1,14 @@
 version: '3.7'
 #
 #  Component arrangement is as below:
-#  
+#
 #  ┌────────────┐    ┌────────────┐   ┌─────────────┐    ┌──────────┐
 #  │            │    │            │   │             │    │          │
 #  │ Simulator  ├───►│ Simulator  ├──►│  SDK Scheme ├───►│  Switch  │
 #  │ Backend    │    │   Core     │   │    Adapter  │    │          │
 #  │   (TTK)    │◄───┤ Connector  │◄──┤             │◄───┤  (TTK)   │
 #  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
-#  
+#
 
 services:
 
@@ -24,7 +24,10 @@ services:
       - portal
 
   keycloak:
-    image: quay.io/keycloak/keycloak:12.0.4
+#    image: quay.io/keycloak/keycloak:12.0.4
+    build:
+      context: ./keycloak-source/server
+      dockerfile: Dockerfile
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
