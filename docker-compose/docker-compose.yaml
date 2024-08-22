@@ -167,8 +167,9 @@ services:
     - -c
     - "yarn start:api-svc"
     environment:
-      - AUTO_ACCEPT_PARTY=true
-      - AUTO_ACCEPT_QUOTES=true
+      - AUTO_ACCEPT_PARTY=false
+      - AUTO_ACCEPT_QUOTES=false
+      - AUTO_ACCEPT_R2P_PARTY=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_HOST=redis
       - CACHE_PORT=6379
@@ -194,6 +195,8 @@ services:
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
       - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
       - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_QUOTES_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_TRANSFERS_ENPOINT=mojaloop-testing-toolkit:4040
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -209,6 +212,10 @@ services:
       - PM4ML_ENABLED=${PM4ML_ENABLED:-false}
       - ENABLE_BACKEND_EVENT_HANDLER=false
       - ENABLE_FSPIOP_EVENT_HANDLER=false
+      - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
+      - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
+      - SUPPORTED_CURRENCIES=''
+      - GET_SERVICES_FXP_RESPONSE=''
     ports:
       - "4000:4000"
       - "4001:4001"
