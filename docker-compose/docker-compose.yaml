@@ -141,16 +141,16 @@ services:
       - -c
       - "npm start"
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
-  # sim-backend-ui:
-  #   image: mojaloop/ml-testing-toolkit-ui:v15.1.3
-  #   ports:
-  #     - "6061:6060"
-  #   environment:
-  #     - API_BASE_URL=http://localhost:5051
-  #     - AUTH_ENABLED=FALSE
-  #   command:
-  #     - sh
-  #     - /usr/share/nginx/start.sh
+  sim-backend-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v15.1.3
+    ports:
+      - "6061:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5051
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
 
   redis:
     image: redis:6.2.4-alpine
@@ -214,7 +214,7 @@ services:
       - ENABLE_FSPIOP_EVENT_HANDLER=false
       - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
       - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
-      - SUPPORTED_CURRENCIES=''
+      - SUPPORTED_CURRENCIES=TZS
       - GET_SERVICES_FXP_RESPONSE=testfxp1
     ports:
       - "4000:4000"
