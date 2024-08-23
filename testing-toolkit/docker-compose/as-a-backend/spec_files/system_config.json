@@ -75,6 +75,13 @@
       "asynchronous": true
     },
     {
+      "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+      "version": "2.1",
+      "folderPath": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1",
+      "asynchronous": false,
+      "prefix": "/backend"
+    },
+    {
       "type": "payment_manager",
       "version": "1.4",
       "folderPath": "payment_manager_1.4",
