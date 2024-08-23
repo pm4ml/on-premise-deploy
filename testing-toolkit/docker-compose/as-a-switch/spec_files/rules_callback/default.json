@@ -500,10 +500,15 @@
           "party": {
             "partyIdInfo": {
               "partySubIdOrType": null
-            }
+            },
+            "supportedCurrencies": [
+              "TZS"
+            ]
           }
         },
-        "scripts": {}
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
       },
       "type": "MOCK_CALLBACK"
     },
