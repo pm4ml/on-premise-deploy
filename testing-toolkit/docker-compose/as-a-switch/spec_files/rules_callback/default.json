@@ -1,5 +1,331 @@
 [
   {
+    "ruleId": 30,
+    "priority": 1,
+    "description": "ttkpayeefsp PUT Notifications Failure Test-case due to invalid FSPIOP-Destination",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "104",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "headers": {
+          "FSPIOP-Destination": "doesnotexistfsp"
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 29,
+    "priority": 1,
+    "description": "ttkpayeefsp PATCH Notifications Failure Test-case due to invalid fulfilment",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "application/vnd.interoperability.transfers+json;version=1.1",
+          "path": "Content-Type"
+        },
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "103",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "body": {
+          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
+          "completedTimestamp": "{$function.generic.curDateISO}",
+          "transferState": "RESERVED",
+          "extensionList": null
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 28,
+    "priority": 1,
+    "description": "ttkpayeefsp PATCH Notifications Failure Test-case due to invalid FSPIOP-Destination",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "application/vnd.interoperability.transfers+json;version=1.1",
+          "path": "Content-Type"
+        },
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "102",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "headers": {
+          "FSPIOP-Destination": "doesnotexistfsp"
+        },
+        "body": {
+          "transferState": "RESERVED"
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 27,
+    "priority": 1,
+    "description": "ttkpayeefsp PATCH Notifications Success Test-case",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "testingtoolkitdfsp",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "ttkpayeefsp",
+          "path": "FSPIOP-Destination"
+        },
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "application/vnd.interoperability.transfers+json;version=1.1",
+          "path": "Content-Type"
+        },
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "101",
+          "path": "amount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/transfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/transfers/{ID}",
+      "params": {
+        "body": {
+          "transferState": "RESERVED"
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 32,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for FXP",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "pathParams",
+          "operator": "equal",
+          "value": "2551234567890",
+          "path": "ID"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.0",
+          "FSPIOP-Source": "greenbankfsp",
+          "Date": "{$request.headers.date}"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "partyIdType": "MSISDN",
+              "partyIdentifier": "{$request.params.ID}",
+              "fspId": "greenbankfsp"
+            },
+            "merchantClassificationCode": "1234",
+            "name": "Yaro",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Yaro",
+                "lastName": "Smith"
+              },
+              "dateOfBirth": "1966-06-16",
+              "kycInformation": "<Encrypted KYC Data>"
+            },
+            "supportedCurrencies": [
+              "TZS"
+            ]
+          }
+        },
+        "scripts": {
+          "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
     "ruleId": 20,
     "priority": 1,
     "description": "get /parties/{Type}/{ID} for pinkbank",
@@ -56,6 +382,82 @@
         },
         "scripts": {
           "scriptingEngine": "postman"
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 31,
+    "priority": 1,
+    "description": "get /parties/{Type}/{ID} for perfsp1",
+    "apiVersion": {
+      "minorVersion": 1,
+      "majorVersion": 1,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_1.1/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_1.1/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_1.1/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_1.1/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_1.1/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "headers",
+          "operator": "equal",
+          "value": "perffsp1",
+          "path": "FSPIOP-Source"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/parties/{Type}/{ID}"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/parties/{Type}/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "const reqHeaders = request.headers;",
+            "const tracestate = reqHeaders.tracestate ? reqHeaders.tracestate : ''",
+            "const epoch = Date.now();",
+            "environment.tracestate = tracestate + ',tx_callback_start_ts=' + epoch"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "body": {
+          "party": {
+            "partyIdInfo": {
+              "fspId": "perffsp2"
+            },
+            "merchantClassificationCode": null,
+            "name": "Justin Pierre",
+            "personalInfo": {
+              "complexName": {
+                "firstName": "Justin",
+                "middleName": "Pierre",
+                "lastName": "Trudeau"
+              },
+              "dateOfBirth": "1971-12-25"
+            }
+          }
+        },
+        "headers": {
+          "Content-Type": "application/vnd.interoperability.parties+json;version=1.1",
+          "FSPIOP-Source": "perffsp2",
+          "tracestate": "{$environment.tracestate}"
         }
       },
       "type": "MOCK_CALLBACK"
@@ -161,14 +563,11 @@
           "exec": [
             "const quoteBody = JSON.parse(request.body)",
             "environment.quoteTransferAmount = quoteBody.amount.amount",
-            "environment.quotePayeeFspFee = 0.5",
-            "environment.quotePayeeFspCommission = 0.2",
+            "environment.quotePayeeFspFee = 0.2",
+            "environment.quotePayeeFspCommission = 0.3",
             "environment.quotePayeeReceiveAmount = quoteBody.amount.amount",
             "if (quoteBody.amountType === 'RECEIVE') {",
-            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee - environment.quotePayeeFspCommission",
-            "}",
-            "if (quoteBody.amountType === 'SEND') {",
-            "  environment.quotePayeeReceiveAmount = (+quoteBody.amount.amount) - environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
+            "  environment.quoteTransferAmount = (+quoteBody.amount.amount) + environment.quotePayeeFspFee + environment.quotePayeeFspCommission",
             "}",
             "environment.quoteExpiration =new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString()"
           ],
@@ -180,6 +579,8 @@
     }
   },
   {
+    "type": "callback",
+    "version": 1,
     "ruleId": 3,
     "priority": 1,
     "description": "post /transfers",
@@ -206,16 +607,10 @@
     "event": {
       "method": "put",
       "path": "/transfers/{ID}",
-      "params": {
-        "scripts": {
-          "scriptingEngine": "postman"
-        }
-      },
+      "params": {},
       "delay": 0,
       "type": "MOCK_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
+    }
   },
   {
     "type": "callback",
@@ -426,6 +821,8 @@
     }
   },
   {
+    "type": "callback",
+    "version": 1,
     "ruleId": 10,
     "priority": 1,
     "description": "post /participants",
@@ -452,38 +849,10 @@
     "event": {
       "method": "put",
       "path": "/participants/{ID}",
-      "params": {
-        "scripts": {
-          "exec": [
-            "",
-            "const reqBody = JSON.parse(request.body)",
-            "const partyList = reqBody.partyList.map(party => ({",
-            "  partyId: party",
-            "}))",
-            "",
-            "custom.appendEventBody({",
-            "  partyList,",
-            "  currency: reqBody.currency",
-            "})",
-            ""
-          ],
-          "scriptingEngine": "javascript"
-        },
-        "body": {
-          "partyList": [],
-          "currency": "USD"
-        },
-        "headers": {
-          "Content-Type": "application/vnd.interoperability.participants+json;version=1.1",
-          "Date": "{$function.generic.curDate}",
-          "FSPIOP-Source": "{$config.FSPID}"
-        }
-      },
+      "params": {},
       "delay": 0,
-      "type": "FIXED_CALLBACK"
-    },
-    "type": "callback",
-    "version": 1
+      "type": "MOCK_CALLBACK"
+    }
   },
   {
     "type": "callback",
@@ -798,5 +1167,304 @@
       "delay": 0,
       "type": "MOCK_CALLBACK"
     }
+  },
+  {
+    "ruleId": 35,
+    "priority": 1,
+    "description": "Timeout for POST /fxTransfers",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "numericEqual",
+          "value": "1000",
+          "path": "sourceAmount.amount"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "body": {
+          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "conversionState": "RESERVED",
+          "extensionList": null
+        },
+        "delay": 300000
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 25,
+    "priority": 1,
+    "description": "Success response for POST /fxTransfers",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxTransfers"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxTransfers/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "environment.completedTimestamp = new Date().toISOString()"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.body.counterPartyFsp}"
+        },
+        "body": {
+          "fulfilment": "WLctttbu2HvTsa1XWvUoGRcQozHsqeu9Ahl2JW9Bsu8",
+          "completedTimestamp": "{$environment.completedTimestamp}",
+          "conversionState": "RESERVED",
+          "extensionList": null
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 33,
+    "priority": 1,
+    "description": "get /services/FXP",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/services/FXP"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "get"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/services/FXP",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "providers": [
+            "FDH_FX"
+          ]
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 34,
+    "priority": 1,
+    "description": "Rule for fxQuotes timeout",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "body",
+          "operator": "equal",
+          "value": "FXP_QUOTES_TIMEOUT",
+          "path": "conversionTerms.extensionList.extension[0].value"
+        },
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}",
+      "params": {
+        "scripts": {
+          "scriptingEngine": "postman"
+        },
+        "delay": 300000
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
+  },
+  {
+    "ruleId": 23,
+    "priority": 1,
+    "description": "Default Rule for FXP Quotes ",
+    "apiVersion": {
+      "minorVersion": 0,
+      "majorVersion": 2,
+      "type": "fspiop",
+      "asynchronous": true,
+      "additionalApi": true,
+      "specFile": "spec_files/api_definitions/fspiop_2.0/api_spec.yaml",
+      "callbackMapFile": "spec_files/api_definitions/fspiop_2.0/callback_map.json",
+      "responseMapFile": "spec_files/api_definitions/fspiop_2.0/response_map.json",
+      "jsfRefFile": "spec_files/api_definitions/fspiop_2.0/mockRef.json",
+      "triggerTemplatesFolder": "spec_files/api_definitions/fspiop_2.0/trigger_templates"
+    },
+    "conditions": {
+      "all": [
+        {
+          "fact": "operationPath",
+          "operator": "equal",
+          "value": "/fxQuotes"
+        },
+        {
+          "fact": "method",
+          "operator": "equal",
+          "value": "post"
+        }
+      ]
+    },
+    "event": {
+      "method": "put",
+      "path": "/fxQuotes/{ID}",
+      "params": {
+        "scripts": {
+          "exec": [
+            "const fxQuoteBody = JSON.parse(request.body)",
+            "environment.sourceAmountValue = fxQuoteBody.conversionTerms.sourceAmount.amount || 500",
+            "environment.targetAmountValue = fxQuoteBody.conversionTerms.targetAmount.amount || 500"
+          ],
+          "scriptingEngine": "javascript"
+        },
+        "headers": {
+          "Content-Type": "{$request.headers.content-type}",
+          "Date": "{$request.headers.date}",
+          "FSPIOP-Source": "{$request.headers.fspiop-destination}"
+        },
+        "body": {
+          "condition": "f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA",
+          "conversionTerms": {
+            "conversionId": "{$request.body.conversionTerms.conversionId}",
+            "determiningTransferId": "b51ec534-ee48-4575-b6a9-ead2955b8069",
+            "initiatingFsp": "PayerFSP",
+            "counterPartyFsp": "{$request.body.conversionTerms.counterPartyFsp}",
+            "amountType": "SEND",
+            "sourceAmount": {
+              "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+              "amount": "{$environment.sourceAmountValue}"
+            },
+            "targetAmount": {
+              "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+              "amount": "{$environment.targetAmountValue}"
+            },
+            "charges": [
+              {
+                "chargeType": "string",
+                "sourceAmount": {
+                  "currency": "{$request.body.conversionTerms.sourceAmount.currency}",
+                  "amount": "33"
+                },
+                "targetAmount": {
+                  "currency": "{$request.body.conversionTerms.targetAmount.currency}",
+                  "amount": "6000"
+                }
+              }
+            ],
+            "expiration": "2023-12-25T14:17:09.663+01:00"
+          }
+        }
+      },
+      "type": "MOCK_CALLBACK"
+    },
+    "type": "callback",
+    "version": 1
   }
 ]
