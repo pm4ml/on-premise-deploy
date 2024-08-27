@@ -141,16 +141,16 @@ services:
       - -c
       - "npm start"
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
-  # sim-backend-ui:
-  #   image: mojaloop/ml-testing-toolkit-ui:v15.1.3
-  #   ports:
-  #     - "6061:6060"
-  #   environment:
-  #     - API_BASE_URL=http://localhost:5051
-  #     - AUTH_ENABLED=FALSE
-  #   command:
-  #     - sh
-  #     - /usr/share/nginx/start.sh
+  sim-backend-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v15.1.3
+    ports:
+      - "6061:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5051
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
 
   redis:
     image: redis:6.2.4-alpine
@@ -168,7 +168,7 @@ services:
     - "yarn start:api-svc"
     environment:
       - AUTO_ACCEPT_PARTY=true
-      - AUTO_ACCEPT_QUOTES=true
+      - AUTO_ACCEPT_QUOTES=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_HOST=redis
       - CACHE_PORT=6379
@@ -204,7 +204,7 @@ services:
       # - OAUTH_CLIENT_KEY={{ CHANGE BEFORE INSTALL e.g. k9edbgS09cE9qAkiVEaz5Hmuc5Ua }}
       # - OAUTH_CLIENT_SECRET={{ CHANGE BEFORE INSTALL e.g. UvMTwwj7am2agjkAfvmElNte4ewa }}
       - VALIDATE_INBOUND_JWS=false
-      - RESERVE_NOTIFICATION=false
+      - RESERVE_NOTIFICATION=true
       # - RESOURCE_VERSIONS="transfers=1.1"
       - PM4ML_ENABLED=${PM4ML_ENABLED:-false}
       - ENABLE_BACKEND_EVENT_HANDLER=false
