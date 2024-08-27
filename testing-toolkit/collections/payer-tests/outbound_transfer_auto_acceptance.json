@@ -41,7 +41,7 @@
               "merchantClassificationCode": 123
             },
             "amountType": "SEND",
-            "currency": "EUR",
+            "currency": "TZS",
             "amount": "10",
             "transactionType": "TRANSFER",
             "note": "Note sent to Payee.",

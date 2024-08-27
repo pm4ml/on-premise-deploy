@@ -159,6 +159,8 @@ services:
       - REDIS_PORT=6379
       - REDIS_REPLICATION_MODE=master
       - REDIS_TLS_ENABLED=no
+    # ports:
+    #   - "6379:6379"
 
   sdk-scheme-adapter:
     image: mojaloop/sdk-scheme-adapter:v23.6.0-snapshot.2
@@ -167,8 +169,8 @@ services:
     - -c
     - "yarn start:api-svc"
     environment:
-      - AUTO_ACCEPT_PARTY=false
-      - AUTO_ACCEPT_QUOTES=false
+      - AUTO_ACCEPT_PARTY=true
+      - AUTO_ACCEPT_QUOTES=true
       - AUTO_ACCEPT_R2P_PARTY=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_HOST=redis
