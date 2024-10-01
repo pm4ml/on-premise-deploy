@@ -141,16 +141,16 @@ services:
       - -c
       - "npm start"
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
-  # sim-backend-ui:
-  #   image: mojaloop/ml-testing-toolkit-ui:v15.1.3
-  #   ports:
-  #     - "6061:6060"
-  #   environment:
-  #     - API_BASE_URL=http://localhost:5051
-  #     - AUTH_ENABLED=FALSE
-  #   command:
-  #     - sh
-  #     - /usr/share/nginx/start.sh
+  sim-backend-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v15.1.3
+    ports:
+      - "6061:6060"
+    environment:
+      - API_BASE_URL=http://localhost:5051
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
 
   redis:
     image: redis:6.2.4-alpine
@@ -159,9 +159,11 @@ services:
       - REDIS_PORT=6379
       - REDIS_REPLICATION_MODE=master
       - REDIS_TLS_ENABLED=no
+    # ports:
+    #   - "6379:6379"
 
   sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v22.0.0
+    image: mojaloop/sdk-scheme-adapter:v23.6.0-snapshot.2
     command:
     - sh
     - -c
@@ -169,6 +171,7 @@ services:
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
+      - AUTO_ACCEPT_R2P_PARTY=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_HOST=redis
       - CACHE_PORT=6379
@@ -194,6 +197,8 @@ services:
       - OUT_CLIENT_KEY_PATH=/secrets/outbound-key.pem
       - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
       - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_QUOTES_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_TRANSFERS_ENPOINT=mojaloop-testing-toolkit:4040
       - TEST_CA_CERT_PATH=/secrets/test-cacert.pem
       - TEST_CLIENT_CERT_PATH=/secrets/test-cert.pem
       - TEST_CLIENT_KEY_PATH=/secrets/test-key.pem
@@ -209,6 +214,10 @@ services:
       - PM4ML_ENABLED=${PM4ML_ENABLED:-false}
       - ENABLE_BACKEND_EVENT_HANDLER=false
       - ENABLE_FSPIOP_EVENT_HANDLER=false
+      - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
+      - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
+      - SUPPORTED_CURRENCIES=TZS
+      - GET_SERVICES_FXP_RESPONSE=testfxp1
     ports:
       - "4000:4000"
       - "4001:4001"

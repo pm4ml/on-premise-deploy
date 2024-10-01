@@ -1,8 +1,16 @@
 {
+  "options": {},
+  "name": "multi",
   "test_cases": [
     {
       "id": 1,
-      "name": "Outbound Transfer",
+      "name": "Outbound transfer No currency conversion",
+      "fileInfo": {
+        "path": "payer-tests/outbound_transfer_fx.json"
+      },
+      "meta": {
+        "info": "Outbound Transfer"
+      },
       "requests": [
         {
           "id": 1,
@@ -41,7 +49,7 @@
               "merchantClassificationCode": 123
             },
             "amountType": "SEND",
-            "currency": "EUR",
+            "currency": "TZS",
             "amount": "10",
             "transactionType": "TRANSFER",
             "note": "Note sent to Payee.",
@@ -100,13 +108,6 @@
             "acceptParty": true
           },
           "scriptingEngine": "javascript",
-          "scripts": {
-            "preRequest": {
-              "exec": [
-                ""
-              ]
-            }
-          },
           "disabled": false,
           "tests": {
             "assertions": [
@@ -132,6 +133,13 @@
                 ]
               }
             ]
+          },
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            }
           }
         },
         {
@@ -186,10 +194,7 @@
             ]
           }
         }
-      ],
-      "fileInfo": {
-        "path": "collections/payer-tests/outbound_transfer.json"
-      }
+      ]
     }
   ]
 }

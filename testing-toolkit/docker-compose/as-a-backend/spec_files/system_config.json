@@ -64,7 +64,8 @@
       "type": "mojaloop_simulator_inbound",
       "version": "1.4",
       "folderPath": "mojaloop_simulator_sim_1.4",
-      "asynchronous": true
+      "asynchronous": true,
+      "prefix":"/inboundSimulator"
     },
     {
       "type": "scheme_adapter_outbound",
@@ -73,6 +74,12 @@
       "hostnames": [],
       "prefix": "/sdk-out",
       "asynchronous": true
+    },
+    {
+      "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+      "version": "2.1",
+      "folderPath": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1",
+      "asynchronous": false
     },
     {
       "type": "payment_manager",
