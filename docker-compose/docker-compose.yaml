@@ -17,7 +17,7 @@ services:
     environment:
       - API_BASE_URL=http://localhost:4010
     ports:
-       - "8081:8080"
+      - "8081:8080"
     depends_on:
       - experience-api
     profiles:
@@ -59,6 +59,10 @@ services:
       - MOCK_DATA=false
       - SESSION_REDIS_URL=redis://redis/2
       - SESSION_SECURE=false
+      - ENABLE_AUTH_CLIENT=true
+      - CACHE_SYNC_INTERVAL_SECONDS=30
+      - CACHE_REDIS_URL=redis://redis:6379/0
+
     depends_on:
       - management-api
       - keycloak
@@ -165,9 +169,9 @@ services:
   sdk-scheme-adapter:
     image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.8
     command:
-    - sh
-    - -c
-    - "yarn start:api-svc"
+      - sh
+      - -c
+      - "yarn start:api-svc"
     environment:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
@@ -278,7 +282,7 @@ services:
     cap_add:
       - IPC_LOCK
     healthcheck:
-      test: ["CMD-SHELL", "test -f /tmp/service_started"]
+      test: [ "CMD-SHELL", "test -f /tmp/service_started" ]
       timeout: 1s
       retries: 20
     profiles:
