@@ -148,6 +148,12 @@
       "version": "2.1",
       "folderPath": "sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets_2.1",
       "asynchronous": false
+    },
+    {
+      "type": "iso20022",
+      "version": "2.0",
+      "folderPath": "fspiop_2.0_iso20022",
+      "asynchronous": true
     }
   ],
   "SOCKET_IO_ENGINE_OPTIONS": {

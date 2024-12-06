@@ -173,6 +173,8 @@ services:
       - -c
       - "yarn start:api-svc"
     environment:
+      - API_TYPE=iso20022
+      - ILP_VERSION=4
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=true
       - AUTO_ACCEPT_R2P_PARTY=false
