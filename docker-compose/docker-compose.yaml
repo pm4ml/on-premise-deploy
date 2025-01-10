@@ -139,6 +139,7 @@ services:
     volumes:
       - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
     ports:
+      - "5052:4040"
       - "5051:5050"
     command:
       - sh
@@ -163,11 +164,11 @@ services:
       - REDIS_PORT=6379
       - REDIS_REPLICATION_MODE=master
       - REDIS_TLS_ENABLED=no
-    # ports:
-    #   - "6379:6379"
+    ports:
+      - "6379:6379"
 
   sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.8
+    image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.10
     command:
       - sh
       - -c

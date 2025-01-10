@@ -2068,6 +2068,7 @@
             "UpdtdPtyAndAcctId": {
               "Agt": {
                 "FinInstnId": {
+                  "LEI": "529900T8BM49AURSDO55",
                   "Othr": {
                     "Id": "ttkpayeefsp"
                   }
@@ -2077,6 +2078,13 @@
                 "Ccy": "XTS"
               },
               "Pty": {
+                "PstlAdr": {
+                  "StrtNm": "1",
+                  "PstCd": "XXXXXX",
+                  "Ctry": "ZM",
+                  "AdrLine": "Main road, Big Town"
+                },
+                "CtryOfRes": "ZM",
                 "Nm": "Test Party",
                 "Id": {
                   "PrvtId": {
