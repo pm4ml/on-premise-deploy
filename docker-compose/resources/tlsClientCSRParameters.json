@@ -1,0 +1,16 @@
+{
+  "subject": {
+    "C": "US",
+    "L": "test",
+    "O": "test",
+    "OU": "test"
+  },
+  "extensions": {
+    "subjectAltName": {
+      "dns": [
+      ],
+      "ips": [
+      ]
+    }
+  }
+}

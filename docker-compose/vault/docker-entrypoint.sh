@@ -125,7 +125,9 @@ vault write -field=certificate pki/root/generate/internal \
 vault write pki/config/urls \
     issuing_certificates="http://127.0.0.1:8233/v1/pki/ca" \
     crl_distribution_points="http://127.0.0.1:8233/v1/pki/crl"
-vault write pki/roles/example.com allowed_domains=example.com allow_subdomains=true allow_any_name=true allow_localhost=true enforce_hostnames=false max_ttl=97600h
+vault write pki/roles/example.com allowed_domains=example.com allow_subdomains=true allow_any_name=true allow_localhost=true enforce_hostnames=false require_cn=false max_ttl=97600h
+vault write pki/roles/client-cert-role allowed_domains=example.com allow_subdomains=true allow_any_name=true allow_localhost=true enforce_hostnames=false require_cn=false max_ttl=97600h
+vault write pki/roles/server-cert-role allowed_domains=example.com allow_subdomains=true allow_any_name=true allow_localhost=true enforce_hostnames=false require_cn=false max_ttl=97600h
 
 tee policy.hcl <<EOF
 # List, create, update, and delete key/value secrets
