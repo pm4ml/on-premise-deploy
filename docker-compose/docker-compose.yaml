@@ -39,7 +39,7 @@ services:
       - portal
 
   experience-api:
-    image: pm4ml/mojaloop-payment-manager-experience-api:3.1.0
+    image: pm4ml/mojaloop-payment-manager-experience-api:3.1.1
     ports:
       - "4010:3000"
     environment:
@@ -62,6 +62,7 @@ services:
       - ENABLE_AUTH_CLIENT=true
       - CACHE_SYNC_INTERVAL_SECONDS=30
       - CACHE_REDIS_URL=redis://redis:6379/0
+      - ENABLE_CORS=TRUE
 
     depends_on:
       - management-api
@@ -168,7 +169,7 @@ services:
       - "6379:6379"
 
   sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.10
+    image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.16
     command:
       - sh
       - -c
