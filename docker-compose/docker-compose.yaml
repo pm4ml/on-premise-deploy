@@ -7,8 +7,13 @@ version: '3.7'
 #  │  MCM API / ├───►│ Management ├──►│  SDK Scheme ├───►│   Hub    │
 #  │  Keycloak  │    │    API     │   │   Adapter   │    │ endpoints│
 #  │   (Hub)    │◄───┤(mcm-client)│◄──┤             │◄───┤ (or TTK) │
-#  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
-#
+#  └────────────┘    └────────────┘   └───┬────▲────┘    └──────────┘
+#                                         │    │
+#                                    ┌────▼────┴─────┐
+#                                    │Core Connector/│
+#                                    │  Sim Backend  │
+#                                    │    (TTK)      │
+#                                    └───────────────┘
 
 services:
 
