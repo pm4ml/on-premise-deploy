@@ -4,9 +4,9 @@ version: '3.7'
 #
 #  ┌────────────┐    ┌────────────┐   ┌─────────────┐    ┌──────────┐
 #  │            │    │            │   │             │    │          │
-#  │ Simulator  ├───►│ Simulator  ├──►│  SDK Scheme ├───►│  Switch  │
-#  │ Backend    │    │   Core     │   │    Adapter  │    │          │
-#  │   (TTK)    │◄───┤ Connector  │◄──┤             │◄───┤  (TTK)   │
+#  │  MCM API / ├───►│ Management ├──►│  SDK Scheme ├───►│   Hub    │
+#  │  Keycloak  │    │    API     │   │   Adapter   │    │ endpoints│
+#  │   (Hub)    │◄───┤(mcm-client)│◄──┤             │◄───┤ (or TTK) │
 #  └────────────┘    └────────────┘   └─────────────┘    └──────────┘
 #
 
@@ -243,7 +243,7 @@ services:
     ports:
       - "8233:8233"
     command: server
-    restart: always
+    restart: unless-stopped
 
   init-vault:
     image: *VAULT_IMAGE
