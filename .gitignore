@@ -1,1 +1,2 @@
 docker-compose/vault/tmp
+docker-compose/.env
