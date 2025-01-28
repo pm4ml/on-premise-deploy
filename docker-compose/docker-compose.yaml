@@ -28,20 +28,20 @@ services:
     profiles:
       - portal
 
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:12.0.4
-#    environment:
-#      - KEYCLOAK_USER=admin
-#      - KEYCLOAK_PASSWORD=admin
-#      - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
-#      - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
-#      - DB_VENDOR=h2
-#    volumes:
-#      - ./keycloak-realm.json:/tmp/pm4ml-realm.json
-#    ports:
-#      - "8080:8080"
-#    profiles:
-#      - portal
+  keycloak:
+   image: quay.io/keycloak/keycloak:12.0.4
+   environment:
+     - KEYCLOAK_USER=admin
+     - KEYCLOAK_PASSWORD=admin
+     - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
+     - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
+     - DB_VENDOR=h2
+   volumes:
+     - ./keycloak-realm.json:/tmp/pm4ml-realm.json
+   ports:
+     - "8080:8080"
+   profiles:
+     - portal
 
   experience-api:
     image: pm4ml/mojaloop-payment-manager-experience-api:3.1.1
