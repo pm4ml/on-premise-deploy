@@ -18,7 +18,7 @@ log_in() {
 }
 
 create_token() {
-   vault token create -id $MY_VAULT_TOKEN
+   vault token create -id "$MY_VAULT_TOKEN"
 }
 
 enable_app_role_auth() {
@@ -69,7 +69,6 @@ path "pki_int/*"
 EOF
 
   vault policy write test-policy policy.hcl
-
   vault write auth/approle/role/my-role policies=test-policy ttl=1h
 
   vault secrets enable -path=pki_int pki
