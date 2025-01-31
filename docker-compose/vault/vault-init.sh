@@ -2,31 +2,36 @@
 
 set -ex
 
-unseal () {
+unseal() {
   vault operator unseal $(grep 'Key 1:' /vault/file/keys | awk '{print $NF}')
   vault operator unseal $(grep 'Key 2:' /vault/file/keys | awk '{print $NF}')
   vault operator unseal $(grep 'Key 3:' /vault/file/keys | awk '{print $NF}')
 }
 
-init () {
+init() {
   vault operator init > /vault/file/keys
 }
 
-log_in () {
+log_in() {
    export ROOT_TOKEN=$(grep 'Initial Root Token:' /vault/file/keys | awk '{print $NF}')
    vault login "$ROOT_TOKEN"
 }
 
-create_token () {
-   vault token create -id $MY_VAULT_TOKEN
+create_token() {
+   vault token create -id "$MY_VAULT_TOKEN"
 }
 
-populate_data () {
+enable_app_role_auth() {
   vault auth enable approle
   vault write auth/approle/role/my-role secret_id_ttl=1000m token_ttl=1000m token_max_ttl=1000m
+}
+
+generate_secret_id() {
   vault read -field role_id auth/approle/role/my-role/role-id > /vault/tmp/role-id
   vault write -field secret_id -f auth/approle/role/my-role/secret-id > /vault/tmp/secret-id
+}
 
+populate_data() {
   vault secrets enable -path=pki pki
   vault secrets enable -path=secrets kv
   vault secrets tune -max-lease-ttl=97600h pki
@@ -64,7 +69,6 @@ path "pki_int/*"
 EOF
 
   vault policy write test-policy policy.hcl
-
   vault write auth/approle/role/my-role policies=test-policy ttl=1h
 
   vault secrets enable -path=pki_int pki
@@ -74,11 +78,15 @@ EOF
 
 if [ -s /vault/file/keys ]; then
    unseal
+   log_in
+   generate_secret_id
 else
    init
    unseal
    log_in
    create_token
+   enable_app_role_auth
+   generate_secret_id
    populate_data
 fi
 
