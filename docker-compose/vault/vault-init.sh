@@ -2,26 +2,26 @@
 
 set -ex
 
-unseal () {
+unseal() {
   vault operator unseal $(grep 'Key 1:' /vault/file/keys | awk '{print $NF}')
   vault operator unseal $(grep 'Key 2:' /vault/file/keys | awk '{print $NF}')
   vault operator unseal $(grep 'Key 3:' /vault/file/keys | awk '{print $NF}')
 }
 
-init () {
+init() {
   vault operator init > /vault/file/keys
 }
 
-log_in () {
+log_in() {
    export ROOT_TOKEN=$(grep 'Initial Root Token:' /vault/file/keys | awk '{print $NF}')
    vault login "$ROOT_TOKEN"
 }
 
-create_token () {
+create_token() {
    vault token create -id $MY_VAULT_TOKEN
 }
 
-enable_app_role_auth () {
+enable_app_role_auth() {
   vault auth enable approle
   vault write auth/approle/role/my-role secret_id_ttl=1000m token_ttl=1000m token_max_ttl=1000m
 }
@@ -31,7 +31,7 @@ generate_secret_id() {
   vault write -field secret_id -f auth/approle/role/my-role/secret-id > /vault/tmp/secret-id
 }
 
-populate_data () {
+populate_data() {
   vault secrets enable -path=pki pki
   vault secrets enable -path=secrets kv
   vault secrets tune -max-lease-ttl=97600h pki
