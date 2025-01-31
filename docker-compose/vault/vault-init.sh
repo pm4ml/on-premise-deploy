@@ -78,6 +78,7 @@ EOF
 
 if [ -s /vault/file/keys ]; then
    unseal
+   log_in
    generate_secret_id
 else
    init
