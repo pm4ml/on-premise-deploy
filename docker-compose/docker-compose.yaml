@@ -118,17 +118,31 @@ services:
     profiles:
       - portal
 
-  sim-backend:
-    image: mojaloop/ml-testing-toolkit:v18.5.1
-    volumes:
-      - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
+  mifos-core-connector:
+    image: mojaloop/mifos-core-connector:latest
+    env_file: .env.example
     ports:
-      - "5052:4040"
-      - "5051:5050"
+      - "3003:3003"
+      - "3004:3004"
     command:
       - sh
       - -c
       - "npm start"
+    environment:
+      SUPPORTED_ID_TYPE: 'MSISDN'
+      SERVICE_CHARGE: 0
+      EXPIRATION_DURATION: 1
+      HTTP_TIMEOUT: 5000
+      SDK_SERVER_HOST: '0.0.0.0'
+      SDK_SERVER_PORT: 3003
+      DFSP_SERVER_HOST: '0.0.0.0'
+      DFSP_SERVER_PORT: 3004
+      DFSP_API_SPEC_FILE: './src/api-spec/core-connector-api-spec-dfsp.yml'
+      SDK_API_SPEC_FILE: './src/api-spec/core-connector-api-spec-sdk.yml'
+      FSP_ID: 'mtnuganda'
+      SDK_BASE_URL: 'http://localhost:4010'
+      LEI: 'mtnuganda'
+
 
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   sim-backend-ui:
@@ -164,7 +178,7 @@ services:
       - AUTO_ACCEPT_PARTY=false
       - AUTO_ACCEPT_QUOTES=false
       - AUTO_ACCEPT_R2P_PARTY=false
-      - BACKEND_ENDPOINT=sim-backend:4040
+      - BACKEND_ENDPOINT=mifos-core-connector:3003
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
       - ENABLE_BACKEND_EVENT_HANDLER=false
