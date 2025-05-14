@@ -1,3 +1,4 @@
 docker-compose/vault/tmp
 docker-compose/.env
 .idea/
+docker-compose/core-connector-config.env
