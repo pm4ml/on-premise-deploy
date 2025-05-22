@@ -1,2 +1,5 @@
 docker-compose/vault/tmp
 docker-compose/.env
+**/*tmp
+**/*keycloak-data
+**/*certs

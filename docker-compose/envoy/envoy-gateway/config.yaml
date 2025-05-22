@@ -1,0 +1,208 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gateway-cert
+  namespace: envoy-gateway-system
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIekNDQWdlZ0F3SUJBZ0lVTFF3UG42dk9xcmQ3bit4L29zZlUxSGREbFhRd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0ZERVNNQkFHQTFVRUF3d0piRzlqWVd4b2IzTjBNQjRYRFRJMU1EVXhOVEEyTVRVeE9Wb1hEVEkyTURVeApOVEEyTVRVeE9Wb3dGREVTTUJBR0ExVUVBd3dKYkc5allXeG9iM04wTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGCkFBT0NBUThBTUlJQkNnS0NBUUVBbmR5RjhQeUw2OFFvN3pWTkVGeFRqdE5IN0RXZXphKzhUNzQ1MVhRNnY5M1IKVVRnQU96K2tUY21QNmhEVkFydnh0L2QxSFFWMXhFTHphVWpqRmNQQ1QwVEU2UnZJVGU0aHhkelBZVHBCamJQSwpGRXp4MUMzUW1SdGgzV3FNQ1hLL1I4bkFmZVBGWlorUXd2TVJZcmQ1QWxjRmlseEM5cUM4QlBuV1U4MTN4cVhSCmlHVVhPZUU1OUFjbHpJTlFCSmNiL0JzQnlWQTZCT05DdENrQnUyeTAwY0Y5QXZUb05mTDM2Q1ZOcXI4SXA1dFEKWWFkYzhTZ2k0KzA0K3lPV04wdnFxTFF5WGxLQUJMb1BCV3FDaWwzd1B0NjkzL3k3MncxUTFjekJnbHE5U2pSYwo2ZGZSckVIR0o3VERtb2FHS1h2RlM0R09Hejh0R0hxbjluTXZ0Yk9RUHdJREFRQUJvMmt3WnpBZEJnTlZIUTRFCkZnUVVEdVQzd1BuTm04bmF1Q1RZbVd4SjdVY3Q4ZjR3SHdZRFZSMGpCQmd3Rm9BVUR1VDN3UG5ObThuYXVDVFkKbVd4SjdVY3Q4ZjR3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFVQmdOVkhSRUVEVEFMZ2dsc2IyTmhiR2h2YzNRdwpEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBQklkMEhsZmtXRERUdkdJN3l0RE1EUDJnNU5zTlYyRE9ZdHRLSEpTCnd3MEk3YWgwWmlJZ0p3NUkvR0t4aXQ3RkhIN2NqM1FQVldHYm9JQ3FoSmVrWkpPYW5iaVNBWmxzbUEvRjduZ2wKVnhTSnlsUDNHYnVJTGtORDRJZEhXeDZwWVhhbnF5S0lSWWI5Y1RleE1tRUxaQTVjdWhJdllnYWNGSlRBMnpORQpyQlpWZDFjaXFqTnNoa29tY2hhVWorQmo2dDNiZ1Z1ajArL1lRUnhTM2FMMUN5dkFNdHZySmtDSXdJRXc0LzdOCjBKVlV5L3BNV3RUb01qMUJHeUQ1ajdiTENoWUxrQUVTdGFlY3JkZWI1UjYyQS9ic1UyekRJdmoyM2JIWForWngKOGhmVzhXOTErSUp0SjJPNFNiMHVUbXQvWUlLY1VOdktJMWthLzRUZUVJbGlwWDA9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRQ2QzSVh3L0l2cnhDanYKTlUwUVhGT08wMGZzTlo3TnI3eFB2am5WZERxLzNkRlJPQUE3UDZSTnlZL3FFTlVDdS9HMzkzVWRCWFhFUXZOcApTT01WdzhKUFJNVHBHOGhON2lIRjNNOWhPa0dOczhvVVRQSFVMZENaRzJIZGFvd0pjcjlIeWNCOTQ4VmxuNURDCjh4Rml0M2tDVndXS1hFTDJvTHdFK2RaVHpYZkdwZEdJWlJjNTRUbjBCeVhNZzFBRWx4djhHd0hKVURvRTQwSzAKS1FHN2JMVFJ3WDBDOU9nMTh2Zm9KVTJxdndpbm0xQmhwMXp4S0NMajdUajdJNVkzUytxb3RESmVVb0FFdWc4Rgphb0tLWGZBKzNyM2YvTHZiRFZEVnpNR0NXcjFLTkZ6cDE5R3NRY1ludE1PYWhvWXBlOFZMZ1k0YlB5MFllcWYyCmN5KzFzNUEvQWdNQkFBRUNnZ0VBQXNlWlRDOEdQN2FLaWZ2RVNaOTJrVE5ETnZPU3draHY1bStSRVNNa3piQVkKT1hmaytTWWJ2SXJxRDlNUURTWkdFVms0SkxTdDZERE5uSEwrSEtuL3grbU1GaGE1SmpZbFBoaXZSaVVDZG41Tgo5cUdNT0pJOTlCUTVXdTYvWElNNnZ3YmNidHNONU1ZMGhGcEhXaGVrOTllVWIyVkVnSmMvK0U1MTZhL2FoaExxClMwZTZBcldoTmtOTzFjTCt6ZXhaS2wvR2RqS2V4d3FvOFJITThaRnFLT01ZdjIxRkZ0SFVlZ2ZtbEZTVjRJMjAKa25aRTNjYmVzUGY2TUV6YnFlcnBIUEduajhsc01aeWJFMFVHSUd3Y1VpNys2Vkx1M3loenA5dURCR1JZS2tQWQo2S0tjRkNHVFIzQVpNeUFtR1E1alpzQ2hmVjY1Uklxb29aNHNXSjBRNFFLQmdRRGN2MUsxM2JrSjltYjVSSzNhCnptaXpiTXR2R0h4dE15NjVDZTdSYlpFdGJ0Um43UjFKNkR4YkdDVndLN3Y3VXNnODk5a29hVkhKT29Ea0xTWFIKZHk3ZXRiQ09jd2JkSG9IUjlBMmhCT3g4SFROUEhEU2tRUlYzVFFUdWhBaFJiOTN3cVZKL0FFL0NsaTZ1RFQ5Rgp0TkZpLzlBY29Ca3QzWWtWRjFGMytpSEs2UUtCZ1FDM0VrWUEvR2MwNVJ1M0tkQUNHS1NndndUWnIwR2RhOGp6ClVjVi8zS1FoUmtDUytQL2cxYmVuNzJxbndxSzZqaWF1TisxcFVWTHJPUVo1SDlhN3RITlZvYWJNM0crVUIxRmcKSlU1ZnBjZGNqVEM4VmpxRVNBbmNJTE9xTWwrYm9tNlFocnBuemIzS2phczJITHJIZ2svRjNvcktOemdMME92OQpTc1FjUmE2NDV3S0JnRHkvUGRDa2dvNVdTNElmUDBTdWRxdWhyZDRWdS9BRkhMOTVGMHAwdjNYa1FQbVVpL0hSCndnSkRnOUg1aHhLamRrMG8yNDYrWk81ZWRpZlVzTXFTNU1nTzhkWlJtenJ3Y1VOSXlSTmRtb0tST3BSenE1emoKK0RkTGI2Yi9tSlpvbFlmcjRMTG9jQXFaYjZFZ0xpQk5vUzJBUGxJU1VMdUpjbmJtWXRvRWNKWTVBb0dBYU5QKwozOXVuNFdMN2p0TlRkNC9TM1BUa2V4M2VyWnlsa2FhV045UUk2OERGZ3lNdnFmZlcxVVBEeDlJc3lqUlJzOXIwCmlDVDRIUmNuUEw1ZGdGZ2czcnpVdldQUVJHdzRUWnl2RnhmZlk0QzVrbTZ4elVOTzJneWp0R1pwMXIyWklBcjEKdkREVVo2TGRrZnU3ZkRpREkyTitCN0s4MWc5SXdsNUlrNFBYTzZzQ2dZRUFzNzFickJtTzRndzd4L0ZWd3RMZQpaSjNKYkcwekk1Sng0a2hYVnhLaHR1UTlKTnZvL2k3T3NoOHBYSVhiT1I0aUtHRUtHWVovbitSWXRCN1lTaWE4ClpPb2MvZDVveVlzTmpiZGZvMjBoeDRmSDRqV1dxSDZ3YWZtSlQvY2NRZEtaQWVnZ1VSRlNWV3FScE5GZEVhZkgKUFRtKzYxWWFXUFNydXZoU3BnRmJKeTA9Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  namespace: envoy-gateway-system
+  annotations:
+    gateway.envoyproxy.io/infrastructure-type: Host
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 8443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: gateway-cert
+            namespace: envoy-gateway-system
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: backend
+  namespace: envoy-gateway-system
+spec:
+  parentRefs:
+    - name: eg
+      namespace: envoy-gateway-system
+  hostnames:
+    - "ec2-18-130-212-53.eu-west-2.compute.amazonaws.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: payment-manager-ui
+          port: 8081
+          weight: 1
+          kind: Backend
+          group: gateway.envoyproxy.io
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: ""
+      backendRefs:
+        - name: experience-api
+          port: 4010
+          weight: 1
+          kind: Backend
+          group: gateway.envoyproxy.io
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /management-api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: ""
+      backendRefs:
+        - name: management-api
+          port: 9000
+          weight: 1
+          kind: Backend
+          group: gateway.envoyproxy.io
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /realms
+      backendRefs:
+        - name: keycloak
+          port: 8085
+          weight: 1
+          kind: Backend
+          group: gateway.envoyproxy.io
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /keycloak
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: ""
+      backendRefs:
+        - name: keycloak
+          port: 8080
+          weight: 1
+          kind: Backend
+          group: gateway.envoyproxy.io
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: test-backend
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 8090
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: mojaloop-testing-toolkit-1
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 4040
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: mojaloop-testing-toolkit-2
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 5050
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: sim-backend-2
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 5052
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: sdk-scheme-adapter
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 4000
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: payment-manager-ui
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 8081
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: experience-api
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 4010
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: keycloak
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 8080
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: management-api
+spec:
+  endpoints:
+    - ip:
+        address: 172.31.26.127
+        port: 9000

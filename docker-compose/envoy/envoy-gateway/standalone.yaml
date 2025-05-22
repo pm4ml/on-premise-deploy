@@ -1,0 +1,27 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyGateway
+gateway:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+provider:
+  type: Custom
+  custom:
+    resource:
+      type: File
+      file:
+        paths: ["/etc/envoy-gateway/config.yaml"]
+    infrastructure:
+      type: Host
+      host:
+        name: envoy-gateway
+        namespace: envoy-gateway-system
+logging:
+  level:
+    default: debug
+rateLimit:
+      backend:
+        type: Redis
+        redis:
+          url: redis:6379
+extensionApis:
+  enableBackend: true
+  enableOAuth: true

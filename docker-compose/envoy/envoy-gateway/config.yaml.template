@@ -1,0 +1,73 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gateway-cert
+  namespace: envoy-gateway-system
+type: kubernetes.io/tls
+data:
+  tls.crt: ${TLS_CERT}
+  tls.key: ${TLS_KEY}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  namespace: envoy-gateway-system
+  annotations:
+    gateway.envoyproxy.io/infrastructure-type: Host
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 8443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: gateway-cert
+            namespace: envoy-gateway-system
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: backend
+  namespace: envoy-gateway-system
+spec:
+  parentRefs:
+    - name: eg
+      namespace: envoy-gateway-system
+  hostnames:
+    - "localhost"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: test-backend
+          port: 8090
+          weight: 1
+          kind: Service
+          group: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-backend
+  namespace: envoy-gateway-system
+spec:
+  ports:
+    - port: 8090
+      targetPort: 8090
+      protocol: TCP
+  type: ExternalName
+  externalName: test-backend.envoy-gateway-test_default 
