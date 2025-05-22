@@ -68,7 +68,7 @@ services:
       - ENABLE_AUTH_CLIENT=true
       - CACHE_SYNC_INTERVAL_SECONDS=30
       - CACHE_REDIS_URL=redis://redis:6379/0
-      - ENABLE_CORS=true
+      - ENABLE_CORS=TRUE
     depends_on:
       - management-api
       - redis
@@ -160,8 +160,12 @@ services:
       - -c
       - "yarn start:api-svc"
     environment:
+      - API_TYPE=iso20022
       - EXPIRY_SECONDS=60
       - ILP_VERSION=4
+      - AUTO_ACCEPT_PARTY=false
+      - AUTO_ACCEPT_QUOTES=false
+      - AUTO_ACCEPT_R2P_PARTY=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
@@ -169,12 +173,27 @@ services:
       - ENABLE_FSPIOP_EVENT_HANDLER=false
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
+      - INBOUND_MUTUAL_TLS_ENABLED=false
+      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
+      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
+      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
+      - JWS_SIGN=true
+      - JWS_SIGNING_KEY_PATH=/jwsSigningKey.key
+      - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
       - METRICS_SERVER_LISTEN_PORT=4004
       - MULTIPLE_PARTIES_RESPONSE=false
       - MGMT_API_WS_URL=management-api
       - MGMT_API_WS_PORT=4005
       - OUTBOUND_LISTEN_PORT=4001
+      - OUTBOUND_MUTUAL_TLS_ENABLED=false
+      # hub endpoints
+      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
+      - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_QUOTES_ENDPOINT=mojaloop-testing-toolkit:4040
+      - FX_TRANSFERS_ENPOINT=mojaloop-testing-toolkit:4040
       - TEST_LISTEN_PORT=4002
+      - VALIDATE_INBOUND_JWS=false
+      - RESERVE_NOTIFICATION=false
       - RESOURCE_VERSIONS=transfers=2.0,quotes=2.0,participants=2.0,parties=2.0,transactionRequests=1.1
       - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
       - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
