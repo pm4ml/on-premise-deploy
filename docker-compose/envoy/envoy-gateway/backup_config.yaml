@@ -1,0 +1,80 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gateway-cert
+  namespace: envoy-gateway-system
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUR0RENDQXB5Z0F3SUJBZ0lFQ1hnMU1EQU5CZ2txaGtpRzl3MEJBUXNGQURBck1SWXdGQVlEVlFRREV3MWwKYm5admVTMW5ZWFJsZDJGNU1SRXdEd1lEVlFRRkV3ZzJNRE16TlRBME56QWVGdzB5TlRBek1qWXdPRFF6TXpOYQpGdzB6TURBek1qWXdPRFF6TXpKYU1CZ3hGakFVQmdOVkJBTVREV1Z1ZG05NUxXZGhkR1YzWVhrd2dnRWlNQTBHCkNTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEUlRwVXdjOFFRek9lS3ZFWC9UeVpncER4YTRYUmQKdTJQRFoyT0x5bE9pM0dUM3VUdDFDWjRZSDlJTS9YL01CTkVKS1MvUTAwSXpSSWc1MmVnUmtYNGxVTmszMVZabgpaVkVsZjU0eWRTdi94d3lkVkV5bXd3OHpvSnNBckxsblg3MnJ6REQrek1iMXdiTk1MbFJiUXE4MEFzRHI1blNGCjNBZU8wNENZaFJFNTNNV1JXUGFSdlFtWElUWHhoR2lvbm5xVVlScWdZWUtQanB3ZWp1a3hPOEhvVkFYM3VQV2cKaXVES1dRLzd5NmJpcXdrUUxxMWw2WFFJMmZsWTg4cGNhU2VDQjlnSG80WWcwQ3I4SkRvdDBoT1Y1VmRqeFJ4TwpGU3VYb1dZRjBDVXR2dFB5b29WRDVPeEF5bUlqZTB3QUFIUHVweEt4dVZ6MFB2b1loNncxUkIvUkFnTUJBQUdqCmdmSXdnZTh3RGdZRFZSMFBBUUgvQkFRREFnVHdNQjBHQTFVZERnUVdCQlJSdGNVcHlXa2xXT3NOVEhab3J3WjEKdEhUeVdEQWZCZ05WSFNNRUdEQVdnQlMycHU0blhpYjJndEsyVWUxQnlPbUhqV011d2pDQm5BWURWUjBSQklHVQpNSUdSZ2cxbGJuWnZlUzFuWVhSbGQyRjVnaUpsYm5admVTMW5ZWFJsZDJGNUxtVnVkbTk1TFdkaGRHVjNZWGt0CmMzbHpkR1Z0Z2labGJuWnZlUzFuWVhSbGQyRjVMbVZ1ZG05NUxXZGhkR1YzWVhrdGMzbHpkR1Z0TG5OMlk0STAKWlc1MmIza3RaMkYwWlhkaGVTNWxiblp2ZVMxbllYUmxkMkY1TFhONWMzUmxiUzV6ZG1NdVkyeDFjM1JsY2k1cwpiMk5oYkRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQXVMUy93TWdGN1hyWXVHWnNHbXdUM3J5cTc2cXBrOGtrClV5TUJSckNjeXJVYkJMaTFZd1FXM0FSN2UyNHl6cG1XcTRNUnhST3JmaUM3QlN1N2ZyV2VOck55alJER1VKZjgKa2Jpb0FWRjBVUGJMeUt2ZmhvNTNPZU5BWURsQXRJUXV3K0IxWTF1aWdJdUgxTXF4ZHhXeVlXVnltalJ6bmYreAprWkJmb0RuS3ViNEhRemxOTGlKbXVRd3J1VDJsakgzaHNuU01FNGtKUGsrVmpJMHErcXFKR3BKcjl2VGhnU1NyCkg0QUNmekp6ak9UM2t2WFA2ekx0QitIVUVjanpJbGMxcExncDRzbHNaZHlCTHlXK3pDMCs1d3E2Nm53Vng0KzUKbyt3clBneERycGxZN2hkaXVEOVg3TncyOGxvaWVCdzloS1dGeGI5VitZWVNTYW9uU3Q1b3N3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRRE5UcFV3YzhRUXpPZUsKdlVYL1R5WmdwRHhjNFhSZHQyUERaMk9MeWxPaTNHVDN1VHQxQ1o0WUg5SU0vWC9NQk5FSktTL1EwMEl6UklnNQoyZWdSa1g0bFVOazMxVlpuWlZFbGY1NHlkU3YveHd5ZFZFeW13dzh6b0pzQXJMbG5YNzJyejREK3pNYjF3Yk5NCk1sUmJRcTgwQXNEcjVuU0YzQWVPNDRDWWhSRTUzTVdSV1BhUnZRbVhJVFh4aEdpb25ucVVZUnFnWVlLUGpwdwplanVreE84SG9WQVgzdVBXZ2l1REtXUS83eTZiaXF3a1FMcTFsNlhRSTJmbFk4OHBjYVNlQ0I5Z0hvNFlnMENyCjhKRG90MGhPVjVWZGp4UnhPRlN1WG9XWUYwQ1V0dnRQeW9vVkQ1T3hBeW1JamUwd0FBSFB1cHhLeHVWejBQdm8KWWh2dzFSQi9SQWdNQkFBR2pnZkl3Z2U4d0RnWURWUjBQQVFIL0JBVURBZ1V3TURBd0JnTlZIU01FQlRBZ0VBCk1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBdUxTL3dNZ0Y3WHJZdUdac0dtd1QKM3J5cTc2cXBrOGtrVXlNQlJyQ2N5clViQkxpMVl3UVczQVI3ZTI0eXpwbVdxNE1SeFJPcmZpQzdCU3U3ZnJXCmVuTnJOeWpSREdVSmY4a2Jpb0FWRjBVUGJMeUt2ZmhvNTNPZU5BWURsQXRJUXV3K0IxWTF1aWdJdUgxTXF4ZHgKWXlZV1Z3bWpSem5mK3hra0pmb0RuS3ViNEhRemxOTGlKbXVRd3J1VDJsakgzaHNuU01FNGtKUGsrVmpJMHErcQpxSkdwSnI5dlRoZ1NTckg0QUNmekp6ak9UM2t2WFA2ekx0QitIVUVjanpJbGMxcExncDRzbHNaZHlCTHlXK3oKQzArNXdxNjZud1Z4NCs1Kyt3clBneERycGxZN2hkaXVEOVg3TncyOGxvaWVCdzloS1dGeGI5VitZWVNTYW9uU3QKNW9zdz09Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 8443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: gateway-cert
+            kind: Secret
+            group: ""
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: backend
+spec:
+  parentRefs:
+    - name: eg
+      sectionName: https
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: gateway.envoyproxy.io
+          kind: Backend
+          name: test-backend
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: test-backend
+spec:
+  endpoints:
+    - ip:
+        address: 192.168.15.105
+        port: 8090
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy 
+metadata:
+  name: policy-httproute
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: backend
+  rateLimit:
+    type: Local
+    local:
+      rules:
+      - limit:
+          requests: 3
+          unit: Hour

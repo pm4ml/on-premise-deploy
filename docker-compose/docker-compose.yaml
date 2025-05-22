@@ -18,9 +18,10 @@ version: '3.7'
 services:
 
   frontend:
-    image: pm4ml/mojaloop-payment-manager-ui:1.17.6
+    image: pm4ml/mojaloop-payment-manager-ui:1.19.0
     environment:
-      - API_BASE_URL=http://localhost:4010
+      - API_BASE_URL=https://ec2-18-130-212-53.eu-west-2.compute.amazonaws.com:8443/api
+      - ENABLE_AUTHENTICATION=true
     ports:
       - "8081:8080"
     depends_on:
@@ -33,7 +34,7 @@ services:
    environment:
      - KEYCLOAK_USER=admin
      - KEYCLOAK_PASSWORD=admin
-     - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
+     - KEYCLOAK_FRONTEND_URL=https://ec2-18-130-212-53.eu-west-2.compute.amazonaws.com:8443/keycloak/auth
      - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
      - DB_VENDOR=h2
    volumes:
@@ -52,9 +53,9 @@ services:
       - AUTH_CLIENT_ID=pm4ml-customer-ui
       - AUTH_CLIENT_SECRET=a857e3d7-ebd4-4451-aabd-bcb480dde1a3
       - AUTH_DISCOVERY_ENDPOINT=http://keycloak:8080/auth/realms/pm4ml/.well-known/openid-configuration
-      - AUTH_LOGGED_IN_LANDING_URL=http://localhost:8081/
+      - AUTH_LOGGED_IN_LANDING_URL=https://ec2-18-130-212-53.eu-west-2.compute.amazonaws.com:8443/keycloak/auth/
       - AUTH_REDIRECT_NAME=pm4ml-customer-ui
-      - AUTH_REDIRECT_URI=http://localhost:4010/auth
+      - AUTH_REDIRECT_URI=https://ec2-18-130-212-53.eu-west-2.compute.amazonaws.com:8443/api/auth
       - AUTH_RESOURCE_NAME=pm4ml-customer-ui
       - AUTH_SCOPES=roles
       - DFSP_ID={{ CHANGE BEFORE INSTALL }}
@@ -67,11 +68,11 @@ services:
       - ENABLE_AUTH_CLIENT=true
       - CACHE_SYNC_INTERVAL_SECONDS=30
       - CACHE_REDIS_URL=redis://redis:6379/0
-      - ENABLE_CORS=TRUE
+      - ENABLE_CORS=true
     depends_on:
       - management-api
       - redis
-#      - keycloak
+      - keycloak
     profiles:
       - portal
 
@@ -119,7 +120,7 @@ services:
       - portal
 
   sim-backend:
-    image: mojaloop/ml-testing-toolkit:v18.5.1
+    image: mojaloop/ml-testing-toolkit:v18.7.5
     volumes:
       - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
     ports:
@@ -132,11 +133,11 @@ services:
 
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   sim-backend-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v16.0.4
+    image: mojaloop/ml-testing-toolkit-ui:v16.1.2
     ports:
       - "6061:6060"
     environment:
-      - API_BASE_URL=http://localhost:5051
+      - API_BASE_URL=http://18.130.212.53:5051
       - AUTH_ENABLED=FALSE
     command:
       - sh
@@ -153,17 +154,14 @@ services:
       - "6379:6379"
 
   sdk-scheme-adapter:
-    image: mojaloop/sdk-scheme-adapter:v23.6.0-iso.16
+    image: mojaloop/sdk-scheme-adapter:v24.9.2
     command:
       - sh
       - -c
       - "yarn start:api-svc"
     environment:
-      - API_TYPE=iso20022
+      - EXPIRY_SECONDS=60
       - ILP_VERSION=4
-      - AUTO_ACCEPT_PARTY=false
-      - AUTO_ACCEPT_QUOTES=false
-      - AUTO_ACCEPT_R2P_PARTY=false
       - BACKEND_ENDPOINT=sim-backend:4040
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
@@ -171,27 +169,12 @@ services:
       - ENABLE_FSPIOP_EVENT_HANDLER=false
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
-      - INBOUND_MUTUAL_TLS_ENABLED=false
-      - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
-      - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
-      - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
-      - JWS_SIGN=true
-      - JWS_SIGNING_KEY_PATH=/jwsSigningKey.key
-      - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
       - METRICS_SERVER_LISTEN_PORT=4004
       - MULTIPLE_PARTIES_RESPONSE=false
       - MGMT_API_WS_URL=management-api
       - MGMT_API_WS_PORT=4005
       - OUTBOUND_LISTEN_PORT=4001
-      - OUTBOUND_MUTUAL_TLS_ENABLED=false
-      # hub endpoints
-      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
-      - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
-      - FX_QUOTES_ENDPOINT=mojaloop-testing-toolkit:4040
-      - FX_TRANSFERS_ENPOINT=mojaloop-testing-toolkit:4040
       - TEST_LISTEN_PORT=4002
-      - VALIDATE_INBOUND_JWS=false
-      - RESERVE_NOTIFICATION=false
       - RESOURCE_VERSIONS=transfers=2.0,quotes=2.0,participants=2.0,parties=2.0,transactionRequests=1.1
       - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
       - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
@@ -199,6 +182,7 @@ services:
     ports:
       - "4000:4000"
       - "4001:4001"
+      - "443:4000"
     volumes:
       - ./inbound-cacert.pem:/secrets/inbound-cacert.pem
       - ./inbound-cert.pem:/secrets/inbound-cert.pem
@@ -230,7 +214,7 @@ services:
     ports:
       - "6060:6060"
     environment:
-      - API_BASE_URL=http://localhost:5050
+      # - API_BASE_URL=http://localhost:5050
       - AUTH_ENABLED=FALSE
     command:
       - sh

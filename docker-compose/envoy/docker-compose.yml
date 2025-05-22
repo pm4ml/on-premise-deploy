@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  envoy-gateway:
+    container_name: envoy-gateway
+    image: envoyproxy/gateway:v1.4.0
+    ports:
+      - "8443:8443"
+      - "8888:8888"
+      - "19000:19000"
+      - "19001:19001"
+      # - "8081:8081"
+    volumes:
+      - ./envoy-gateway:/etc/envoy-gateway
+      - ./certs/envoy-oidc-hmac:/tmp/envoy-gateway/certs/envoy-oidc-hmac
+      - ./certs/envoy:/tmp/envoy-gateway/certs/envoy
+      - ./certs/envoy-gateway:/tmp/envoy-gateway/certs/envoy-gateway
+      - ./tmp:/tmp/envoy-gateway
+      - ./certs:/etc/envoy-gateway/certs
+    command: server --config-path /etc/envoy-gateway/standalone.yaml
+    environment:
+      - EG_EXTENSION_APIS_ENABLE_BACKEND=true
+      - EG_EXTENSION_APIS_ENABLE_OAUTH=true
+      - ENVOY_GATEWAY_NAMESPACE=envoy-gateway-system
+      - EG_GATEWAY_CONTROLLER_NAME=gateway.envoyproxy.io/gatewayclass-controller
+      - EG_PROVIDER_TYPE=Custom
+      - EG_PROVIDER_CUSTOM_RESOURCE_TYPE=File
+      - EG_PROVIDER_CUSTOM_RESOURCE_FILE_PATHS=/etc/envoy-gateway/config.yaml
+      - EG_PROVIDER_CUSTOM_INFRASTRUCTURE_TYPE=Host
+      - EG_LOG_LEVEL=debug
+    networks:
+      - envoy-gateway-test
+    depends_on:
+      - redis
+      - test-backend
+      - keycloak
+  
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis-ratelimit
+    ports:
+      - "6380:6379"
+    networks:
+      - envoy-gateway-test
+  
+  test-backend:
+    image: python:3.13-slim
+    container_name: test-backend
+    networks:
+      - envoy-gateway-test
+    volumes:
+      - ../:/app
+    working_dir: /app
+    command: python3 -m http.server 8090
+    ports:
+      - "8090:8090"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=dev-file
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY=edge
+      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.private=0.0.0.0 -Dvertx.cacheDirBase=/opt/keycloak/cache -Djava.io.tmpdir=/opt/keycloak/tmp
+    volumes:
+      - ./keycloak-data:/opt/keycloak/data
+      - ./keycloak-cache:/opt/keycloak/cache
+      - ./keycloak-tmp:/opt/keycloak/tmp
+    ports:
+      - "8085:8080"
+    networks:
+      - envoy-gateway-test
+    command:
+      - start-dev
+      - --hostname=localhost
+      - --hostname-port=8085
+      - --hostname-strict-backchannel=false
+
+networks:
+  envoy-gateway-test:
+    name: envoy-gateway-test
+    driver: bridge
