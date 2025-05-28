@@ -119,10 +119,21 @@ services:
     profiles:
       - portal
 
-  # TODO: Add sim-backend here
-
-  # TODO: rename sim-backend to core-connector
   sim-backend:
+    image: mojaloop/ml-testing-toolkit:v18.5.1
+    volumes:
+      - "../testing-toolkit/docker-compose/as-a-backend/spec_files:/opt/app/spec_files"
+    ports:
+      - "5052:4040"
+      - "5051:5050"
+    command:
+      - sh
+      - -c
+      - "npm start"
+    profiles:
+      - sim-backend
+
+  core-connector:
     image: ${CORE_CONNECTOR_IMAGE:-mojaloop/ml-testing-toolkit}:${CORE_CONNECTOR_TAG:-v18.5.1}
     env_file:
         - core-connector-config.env
@@ -142,7 +153,8 @@ services:
       - SDK_API_SPEC_FILE=./core-connector-config/core-connector-api-spec-sdk.yml
       # Mojaloop Connector
       - SDK_BASE_URL=http://sdk-scheme-adapter:4001
-    # TODO: Add core-connector profile
+    profiles:
+      - core-connector
 
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   sim-backend-ui:
@@ -158,6 +170,9 @@ services:
     command:
       - sh
       - /usr/share/nginx/start.sh
+    profiles:
+      - core-connector
+      - sim-backend
 
   redis:
     image: bitnami/redis:7.0.8-debian-11-r0
@@ -181,8 +196,7 @@ services:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=false
       - AUTO_ACCEPT_R2P_PARTY=false
-      # TODO: Make the port configurable
-      - BACKEND_ENDPOINT=sim-backend:3003
+      - BACKEND_ENDPOINT=core-connector:${BACKEND_PORT:-3003}
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
       - ENABLE_BACKEND_EVENT_HANDLER=false
