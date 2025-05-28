@@ -154,6 +154,13 @@
       "version": "2.0",
       "folderPath": "fspiop_2.0_iso20022",
       "asynchronous": true
+    },
+    {
+      "type": "send-money-api",
+      "version": "2.0",
+      "folderPath": "send-money-api_2.0",
+      "asynchronous": false,
+      "additionalApi": true
     }
   ],
   "SOCKET_IO_ENGINE_OPTIONS": {

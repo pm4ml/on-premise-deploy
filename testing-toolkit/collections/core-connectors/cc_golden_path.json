@@ -1,0 +1,1408 @@
+{
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  },
+  "name": "cc_golden_path",
+  "test_cases": [
+    {
+      "id": 1,
+      "name": "DFSP Customer Application - Outgoing Payments",
+      "fileInfo": {
+        "path": "cc_golden_path.json"
+      },
+      "meta": {
+        "info": "Outbound Transfer"
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "POST /send-money Happy Path",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/send-money",
+          "path": "/send-money",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "payeeId": "{$environment.payeeId}",
+            "payeeIdType": "{$environment.payeeIdType}",
+            "sendAmount": "{$environment.sendAmount}",
+            "sendCurrency": "{$environment.sendCurrency}",
+            "receiveCurrency": "{$environment.receiveCurrency}",
+            "purposeCode": "{$environment.sendMoneyPurposeCode}",
+            "transactionType": "TRANSFER",
+            "payer": {
+              "name": "{$environment.payerName}",
+              "payerId": "{$environment.payerId}",
+              "DateAndPlaceOfBirth": {
+                "BirthDt": "{$environment.payerDOB}",
+                "PrvcOfBirth": "{$environment.payerPrvncOB}",
+                "CityOfBirth": "{$environment.payerCityOB}",
+                "CtryOfBirth": "{$environment.payerCtryOB}"
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check transactionId is present in response",
+                "exec": [
+                  "expect(response.body.transactionId).not.to.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "postRequest": {
+              "exec": [
+                "environment.sendTransferId = response.body.transactionId",
+                "",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 2,
+          "description": "POST /send-money Bad Request",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/send-money",
+          "path": "/send-money",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "payeeId": "{$environment.payeeId}",
+            "payeeIdType": "{$environment.payeeIdType}",
+            "sendCurrency": "{$environment.sendCurrency}",
+            "receiveCurrency": "{$environment.receiveCurrency}",
+            "purposeCode": "{$environment.sendMoneyPurposeCode}",
+            "transactionType": "TRANSFER",
+            "payer": {
+              "name": "{$environment.payerName}",
+              "payerId": "{$environment.payerId}",
+              "DateAndPlaceOfBirth": {
+                "BirthDt": "{$environment.payerDOB}",
+                "PrvcOfBirth": "{$environment.payerPrvncOB}",
+                "CityOfBirth": "{$environment.payerCityOB}",
+                "CtryOfBirth": "{$environment.payerCtryOB}"
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 3,
+          "description": "PUT /send-money Happy Path",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/send-money/{transferId}",
+          "path": "/send-money/{$environment.sendTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.sendTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptQuote": true,
+            "homeTransactionId": "HTX123456789"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check response body should contain transferId",
+                "exec": [
+                  "expect(response.body.transferId).not.to.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 4,
+          "description": "PUT /send-money Happy Path Reject Quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/send-money/{transferId}",
+          "path": "/send-money/{$environment.sendTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.sendTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptQuote": false,
+            "homeTransactionId": "{$prev.1.request.body.homeTransactionId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "description": "PUT /send-money Bad Request",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/send-money/{transferId}",
+          "path": "/send-money/{$environment.sendTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.sendTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptRuote": true,
+            "homeTransactionId": "{$prev.1.request.body.homeTransactionId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 6,
+          "description": "POST /merchant-payment Happy Path",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/merchant-payment",
+          "path": "/merchant-payment",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "payeeId": "{$environment.payeeId}",
+            "payeeIdType": "{$environment.payeeIdType}",
+            "receiveAmount": "{$environment.merchantAmount}",
+            "sendCurrency": "{$environment.sendCurrency}",
+            "receiveCurrency": "{$environment.receiveCurrency}",
+            "purposeCode": "{$environment.sendMoneyPurposeCode}",
+            "transactionType": "TRANSFER",
+            "payer": {
+              "name": "{$environment.payerName}",
+              "payerId": "{$environment.payerId}",
+              "DateAndPlaceOfBirth": {
+                "BirthDt": "{$environment.payerDOB}",
+                "PrvcOfBirth": "{$environment.payerPrvncOB}",
+                "CityOfBirth": "{$environment.payerCityOB}",
+                "CtryOfBirth": "{$environment.payerCtryOB}"
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check transactionId is present in response",
+                "exec": [
+                  "expect(response.body.transactionId).not.to.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "disabled": false,
+          "scriptingEngine": "javascript",
+          "scripts": {
+            "preRequest": {
+              "exec": [
+                ""
+              ]
+            },
+            "postRequest": {
+              "exec": [
+                "environment.merchantTransferId = response.body.transactionId",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "id": 7,
+          "description": "POST /merchant-payment Bad Request",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/merchant-payment",
+          "path": "/merchant-payment",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "homeTransactionId": "{$function.generic.generateUUID}",
+            "payeeId": "{$environment.payeeId}",
+            "payeeIdType": "{$environment.payeeIdType}",
+            "sendCurrency": "{$environment.sendCurrency}",
+            "receiveCurrency": "{$environment.receiveCurrency}",
+            "purposeCode": "{$environment.sendMoneyPurposeCode}",
+            "transactionType": "TRANSFER",
+            "payer": {
+              "name": "{$environment.payerName}",
+              "payerId": "{$environment.payerId}",
+              "DateAndPlaceOfBirth": {
+                "BirthDt": "{$environment.payerDOB}",
+                "PrvcOfBirth": "{$environment.payerPrvncOB}",
+                "CityOfBirth": "{$environment.payerCityOB}",
+                "CtryOfBirth": "{$environment.payerCtryOB}"
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 8,
+          "description": "PUT /merchant-payment Happy Path",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/merchant-payment/{transferId}",
+          "path": "/merchant-payment/{$environment.merchantTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.merchantTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptQuote": true,
+            "homeTransactionId": "{$prev.7.request.body.homeTransactionId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check response body should contain transferId",
+                "exec": [
+                  "expect(response.body.transferId).not.to.equal(undefined)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 9,
+          "description": "PUT /merchant-payment Happy Path Rejected Quote",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/merchant-payment/{transferId}",
+          "path": "/merchant-payment/{$environment.merchantTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.merchantTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptQuote": false,
+            "homeTransactionId": "{$prev.7.request.body.homeTransactionId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 10,
+          "description": "PUT /merchant-payment Bad Request",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/merchant-payment/{transferId}",
+          "path": "/merchant-payment/{$environment.merchantTransferId}",
+          "method": "put",
+          "params": {
+            "transferId": "{$environment.merchantTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "body": {
+            "acceptqote": false,
+            "homeTransactionId": "{$prev.7.request.body.homeTransactionId}"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 11,
+          "description": "Send Money GET /transfers/{transferId} Happy Path",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.sendTransferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$environment.sendTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 12,
+          "description": "Merchant Payment GET /transfers/{transferId} Happy Path Copy",
+          "apiVersion": {
+            "minorVersion": 0,
+            "majorVersion": 2,
+            "type": "send-money-api",
+            "asynchronous": false,
+            "additionalApi": true,
+            "specFile": "spec_files/api_definitions/send-money-api_2.0/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/send-money-api_2.0/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/send-money-api_2.0/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/send-money-api_2.0/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/send-money-api_2.0/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{$environment.merchantTransferId}",
+          "method": "get",
+          "params": {
+            "transferId": "{$environment.merchantTransferId}"
+          },
+          "url": "http://{$environment.connectorHost}:3004",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Mojaloop Connector - Incoming Payments",
+      "fileInfo": {
+        "path": "cc_golden_path.json"
+      },
+      "meta": {
+        "info": "Mojaloop Connector "
+      },
+      "requests": [
+        {
+          "id": 1,
+          "description": "GET Parties Happy Path",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/parties/{IdType}/{ID}",
+          "path": "/parties/MSISDN/978980797",
+          "method": "get",
+          "params": {
+            "ID": "978980797",
+            "IdType": "MSISDN"
+          },
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 2,
+          "description": "POST quoterequests Happy Path",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/quoterequests",
+          "path": "/quoterequests",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "body": {
+            "amount": "500",
+            "amountType": "SEND",
+            "currency": "ZMW",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "978034884"
+            },
+            "initiator": "PAYER",
+            "initiatorType": "CONSUMER",
+            "quoteId": "2fc138a2-0a8f-4e4e-a39b-f881e08cab65",
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "978980797"
+            },
+            "transactionId": "6b73953f-f4b5-4029-8011-72ab0f4f8e23",
+            "transactionType": "TRANSFER"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code should be 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 3,
+          "description": "POST Transfers Happy Path ",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "amount": "{$environment.payeeAmount}",
+            "amountType": "SEND",
+            "currency": "EUR",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "777123456"
+            },
+            "to": {
+              "idType": "{$environment.payeeIdType}",
+              "idValue": "{$environment.payeeId}"
+            },
+            "ilpPacket": {
+              "data": {
+                "amount": {
+                  "amount": "400",
+                  "currency": "EUR"
+                },
+                "payee": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "56733123450",
+                    "fspId": "mtnuganda"
+                  },
+                  "merchantClassificationCode": "1234",
+                  "name": "Payee Name",
+                  "personalInfo": {
+                    "complexName": {
+                      "firstName": "PayeeFirstName",
+                      "lastName": "PayeeLastName"
+                    },
+                    "dateOfBirth": "2001-08-21"
+                  },
+                  "supportedCurrencies": [
+                    "EUR"
+                  ]
+                },
+                "payer": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "0882997445",
+                    "fspId": "tnmmalawi"
+                  },
+                  "merchantClassificationCode": "1234",
+                  "name": "Payee Name",
+                  "personalInfo": {
+                    "complexName": {
+                      "firstName": "PayeeFirstName",
+                      "lastName": "PayeeLastName"
+                    },
+                    "dateOfBirth": "2001-08-21"
+                  },
+                  "supportedCurrencies": [
+                    "ZMW"
+                  ]
+                },
+                "quoteId": "2d93d09c-aa9f-411a-ba48-b315dd04d5d8",
+                "transactionId": "25394f6a-aa14-46a2-b28a-35140e842f7d",
+                "transactionType": {
+                  "initiator": "PAYER",
+                  "initiatorType": "CONSUMER",
+                  "scenario": "TRANSFER",
+                  "subScenario": "LOCALLY_DEFINED_SUBSCENARIO"
+                }
+              }
+            },
+            "transactionType": "TRANSFER",
+            "quote": {
+              "expiration": "2024-10-15T13:17:57.742Z",
+              "payeeFspCommissionAmount": "0",
+              "payeeFspCommissionAmountCurrency": "MWK",
+              "payeeFspFeeAmount": "0",
+              "payeeFspFeeAmountCurrency": "MWK",
+              "payeeReceiveAmount": "{$environment.payeeAmount}",
+              "payeeReceiveAmountCurrency": "MWK",
+              "quoteId": "1d0a1eae-02de-4bdb-beb5-fb87f200fa4e",
+              "transactionId": "13b362e2-8a73-4e81-a6a1-88cb142cf027",
+              "transferAmount": "{$environment.payeeAmount}",
+              "transferAmountCurrency": "MWK"
+            },
+            "note": "Transfer Quote Request"
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check status code to equal 200",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 4,
+          "description": "PUT /transfers/{transferId}",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/f7fbf391-c29b-4534-bc86-1892568f7ad8",
+          "method": "put",
+          "params": {
+            "transferId": "f7fbf391-c29b-4534-bc86-1892568f7ad8"
+          },
+          "url": "http://{$environment.connectorHost}:3003",
+          "body": {
+            "currentState": "COMPLETED",
+            "transferId": "{$function.generic.generateUUID}",
+            "quoteRequest": {
+              "body": {
+                "quoteId": "{$function.generic.generateUUID}",
+                "transactionId": "{$function.generic.generateUUID}",
+                "payee": {
+                  "partyIdInfo": {
+                    "partyIdType": "{$environment.payeeIdType}",
+                    "partyIdentifier": "{$environment.payeeId}"
+                  }
+                },
+                "payer": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$environment.payerId}"
+                  }
+                },
+                "amountType": "SEND",
+                "amount": {
+                  "currency": "{$environment.receiveCurrency}",
+                  "amount": "{$environment.payeeAmount}"
+                },
+                "transactionType": {
+                  "scenario": "DEPOSIT",
+                  "initiator": "PAYER",
+                  "initiatorType": "CONSUMER"
+                }
+              }
+            }
+          },
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code",
+                "exec": [
+                  "expect(response.status).to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 5,
+          "description": "Get parties with unsupported ID",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/parties/{IdType}/{ID}",
+          "path": "/parties/IBAN/978980797",
+          "method": "get",
+          "params": {
+            "ID": "978980797",
+            "IdType": "IBAN"
+          },
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        },
+        {
+          "id": 7,
+          "description": "POST Quote Requests with Missing Values",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/quoterequests",
+          "path": "/quoterequests",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "body": {},
+          "disabled": false
+        },
+        {
+          "id": 8,
+          "description": "POST Quote Requests with Invalid ID type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/quoterequests",
+          "path": "/quoterequests",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check if Status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that Mojaloop status code is 3100",
+                "exec": [
+                  "expect(response.body.status).to.equal(\"3100\")"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "amount": "500",
+            "amountType": "SEND",
+            "currency": "ZMW",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "978034884"
+            },
+            "initiator": "PAYER",
+            "initiatorType": "CONSUMER",
+            "quoteId": "2fc138a2-0a8f-4e4e-a39b-f881e08cab65",
+            "to": {
+              "idType": "IBAN",
+              "idValue": "978980797"
+            },
+            "transactionId": "6b73953f-f4b5-4029-8011-72ab0f4f8e23",
+            "transactionType": "TRANSFER"
+          },
+          "disabled": false
+        },
+        {
+          "id": 9,
+          "description": "POST QUOTE Requests if currency is not supported",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/quoterequests",
+          "path": "/quoterequests",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check that response status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check that Mojaloop status code is 5106",
+                "exec": [
+                  "expect(response.body.status).to.equal(\"5106\")"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "amount": "500",
+            "amountType": "SEND",
+            "currency": "KES",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "978034884"
+            },
+            "initiator": "PAYER",
+            "initiatorType": "CONSUMER",
+            "quoteId": "2fc138a2-0a8f-4e4e-a39b-f881e08cab65",
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "978980797"
+            },
+            "transactionId": "6b73953f-f4b5-4029-8011-72ab0f4f8e23",
+            "transactionType": "TRANSFER"
+          },
+          "disabled": false
+        },
+        {
+          "id": 10,
+          "description": "POST QUOTE Requests if account is blocked",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/quoterequests",
+          "path": "/quoterequests",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check if response status code is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "amount": "500",
+            "amountType": "SEND",
+            "currency": "ZMW",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "978034884"
+            },
+            "initiator": "PAYER",
+            "initiatorType": "CONSUMER",
+            "quoteId": "2fc138a2-0a8f-4e4e-a39b-f881e08cab65",
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "{$environment.payeeIdNotFound}"
+            },
+            "transactionId": "6b73953f-f4b5-4029-8011-72ab0f4f8e23",
+            "transactionType": "TRANSFER"
+          },
+          "disabled": false
+        },
+        {
+          "id": 11,
+          "description": "POST Transfers with invalid ID type",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check if Status code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "transferId": "{$function.generic.generateUUID}",
+            "amount": "{$environment.payeeAmount}",
+            "amountType": "SEND",
+            "currency": "EUR",
+            "from": {
+              "idType": "MSISDN",
+              "idValue": "777123456"
+            },
+            "to": {
+              "idType": "{$environment.invalidIdType}",
+              "idValue": "{$environment.payeeId}"
+            },
+            "ilpPacket": {
+              "data": {
+                "amount": {
+                  "amount": "400",
+                  "currency": "EUR"
+                },
+                "payee": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "56733123450",
+                    "fspId": "mtnuganda"
+                  },
+                  "merchantClassificationCode": "1234",
+                  "name": "Payee Name",
+                  "personalInfo": {
+                    "complexName": {
+                      "firstName": "PayeeFirstName",
+                      "lastName": "PayeeLastName"
+                    },
+                    "dateOfBirth": "2001-08-21"
+                  },
+                  "supportedCurrencies": [
+                    "EUR"
+                  ]
+                },
+                "payer": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "0882997445",
+                    "fspId": "tnmmalawi"
+                  },
+                  "merchantClassificationCode": "1234",
+                  "name": "Payee Name",
+                  "personalInfo": {
+                    "complexName": {
+                      "firstName": "PayeeFirstName",
+                      "lastName": "PayeeLastName"
+                    },
+                    "dateOfBirth": "2001-08-21"
+                  },
+                  "supportedCurrencies": [
+                    "ZMW"
+                  ]
+                },
+                "quoteId": "2d93d09c-aa9f-411a-ba48-b315dd04d5d8",
+                "transactionId": "25394f6a-aa14-46a2-b28a-35140e842f7d",
+                "transactionType": {
+                  "initiator": "PAYER",
+                  "initiatorType": "CONSUMER",
+                  "scenario": "TRANSFER",
+                  "subScenario": "LOCALLY_DEFINED_SUBSCENARIO"
+                }
+              }
+            },
+            "transactionType": "TRANSFER",
+            "quote": {
+              "expiration": "2024-10-15T13:17:57.742Z",
+              "payeeFspCommissionAmount": "0",
+              "payeeFspCommissionAmountCurrency": "MWK",
+              "payeeFspFeeAmount": "0",
+              "payeeFspFeeAmountCurrency": "MWK",
+              "payeeReceiveAmount": "{$environment.payeeAmount}",
+              "payeeReceiveAmountCurrency": "MWK",
+              "quoteId": "1d0a1eae-02de-4bdb-beb5-fb87f200fa4e",
+              "transactionId": "13b362e2-8a73-4e81-a6a1-88cb142cf027",
+              "transferAmount": "{$environment.payeeAmount}",
+              "transferAmountCurrency": "MWK"
+            },
+            "note": "Transfer Quote Request"
+          },
+          "disabled": false
+        },
+        {
+          "id": 12,
+          "description": "POST Transfers with unsupported currency",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/transfers",
+          "path": "/transfers",
+          "method": "post",
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check if Status Code is 400",
+                "exec": [
+                  "expect(response.status).to.equal(400)"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "amount": "500",
+            "amountType": "SEND",
+            "currency": "KES",
+            "from": {
+              "idType": "IBAN",
+              "idValue": "ZM29934000343343"
+            },
+            "to": {
+              "idType": "MSISDN",
+              "idValue": "978980797"
+            },
+            "ilpPacket": {
+              "data": {
+                "amount": {
+                  "amount": "500",
+                  "currency": "ZMW"
+                },
+                "payee": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "978980797",
+                    "fspId": "airtel-123-qwerty"
+                  },
+                  "merchantClassificationCode": "1234",
+                  "name": "Payee Name",
+                  "personalInfo": {
+                    "complexName": {
+                      "firstName": "PayeeFirstName",
+                      "lastName": "PayeeLastName"
+                    },
+                    "dateOfBirth": "YYYY-MM-DD"
+                  },
+                  "supportedCurrencies": [
+                    "ZMW"
+                  ]
+                },
+                "payer": {
+                  "idType": "IBAN",
+                  "idValue": "ZM29934000343343"
+                },
+                "quoteId": "11b4a8d6-728d-49f8-a545-8a23bc62ba86",
+                "transactionId": "11b4a8d6-728d-49f8-a545-8a23bc62ba86",
+                "transactionType": {
+                  "initiator": "PAYER",
+                  "initiatorType": "CONSUMER",
+                  "scenario": "TRANSFER",
+                  "subScenario": "LOCALLY_DEFINED_SUBSCENARIO"
+                }
+              }
+            },
+            "note": "Transfer Quote Request"
+          },
+          "disabled": false
+        },
+        {
+          "id": 13,
+          "description": "PUT transfers/{transferId} with current state ERROR_OCCURED",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/transfers/{transferId}",
+          "path": "/transfers/{transferId}",
+          "method": "put",
+          "params": {
+            "transferId": ""
+          },
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check if status code is 500",
+                "exec": [
+                  "expect(response.status).to.equal(500)"
+                ]
+              },
+              {
+                "id": 2,
+                "description": "Check if response message is equal to ERROR_OCCURRED",
+                "exec": [
+                  "expect(response.body.message).to.equal(\"Transfer Not Completed Error\")"
+                ]
+              }
+            ]
+          },
+          "body": {
+            "currentState": "ERROR_OCCURRED",
+            "transferId": "{$function.generic.generateUUID}",
+            "quoteRequest": {
+              "body": {
+                "quoteId": "{$function.generic.generateUUID}",
+                "transactionId": "{$function.generic.generateUUID}",
+                "payee": {
+                  "partyIdInfo": {
+                    "partyIdType": "{$environment.payeeIdType}",
+                    "partyIdentifier": "{$environment.payeeId}"
+                  }
+                },
+                "payer": {
+                  "partyIdInfo": {
+                    "partyIdType": "MSISDN",
+                    "partyIdentifier": "{$environment.payerId}"
+                  }
+                },
+                "amountType": "SEND",
+                "amount": {
+                  "currency": "{$environment.receiveCurrency}",
+                  "amount": "{$environment.payeeAmount}"
+                },
+                "transactionType": {
+                  "scenario": "DEPOSIT",
+                  "initiator": "PAYER",
+                  "initiatorType": "CONSUMER"
+                }
+              }
+            }
+          },
+          "disabled": false
+        },
+        {
+          "id": 16,
+          "description": "GET /parties/{Type/{Id} Party Not found",
+          "apiVersion": {
+            "minorVersion": 1,
+            "majorVersion": 2,
+            "type": "sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets",
+            "asynchronous": false,
+            "prefix": "/backend",
+            "specFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/api_spec.yaml",
+            "callbackMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/callback_map.json",
+            "responseMapFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/response_map.json",
+            "jsfRefFile": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/mockRef.json",
+            "triggerTemplatesFolder": "spec_files/api_definitions/sdk-scheme-adapter-backend-v2_1_0-openapi3-snippets_2.1/trigger_templates"
+          },
+          "operationPath": "/parties/{idType}/{idValue}",
+          "path": "/parties/{$environment.payeeIdType}/{$environment.payeeIdNotFound}",
+          "method": "get",
+          "params": {
+            "idType": "{$environment.payeeIdType}",
+            "idValue": "{$environment.payeeIdNotFound}",
+            "transferId": ""
+          },
+          "url": "http://{$environment.connectorHost}:3003",
+          "tests": {
+            "assertions": [
+              {
+                "id": 1,
+                "description": "Check response status code is not 200",
+                "exec": [
+                  "expect(response.status).not.to.equal(200)"
+                ]
+              }
+            ]
+          },
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "inputValues": {
+    "payerId": "971938765",
+    "payeeId": "265998571175",
+    "sendCurrency": "MWK",
+    "receiveCurrency": "XTS",
+    "desc": "School Fees",
+    "payeeIdType": "MSISDN",
+    "sendAmount": "1000",
+    "payerName": "Joshua Karame",
+    "payerDOB": "2001-01-01",
+    "payerPrvncOB": "Central Province",
+    "payerCityOB": "Lilongwe",
+    "payerCtryOB": "MW",
+    "merchantAmount": "100",
+    "sendMoneyPurposeCode": "P2P",
+    "payeeAmount": "400",
+    "payeeIdNotFound": "46733123450",
+    "invalidIdType": "EMAIL",
+    "connectorHost": "core-connector"
+  },
+  "options": {
+    "breakOnError": false,
+    "transformerName": "none",
+    "generateIDType": "ulid"
+  }
+}
