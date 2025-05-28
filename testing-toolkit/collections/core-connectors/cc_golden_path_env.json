@@ -17,7 +17,7 @@
     "payeeAmount": "400",
     "payeeIdNotFound": "46733123450",
     "invalidIdType": "EMAIL",
-    "connectorHost": "core-connector1"
+    "connectorHost": "core-connector"
   },
   "options": {
     "breakOnError": false,
