@@ -119,15 +119,14 @@ services:
     profiles:
       - portal
 
+  # TODO: Add sim-backend here
+
+  # TODO: rename sim-backend to core-connector
   sim-backend:
     image: ${CORE_CONNECTOR_IMAGE:-mojaloop/ml-testing-toolkit}:${CORE_CONNECTOR_TAG:-v18.5.1}
     env_file:
-        # - .env
         - core-connector-config.env
     ports:
-      # - "5052:4040"
-      # - "5051:5050"
-      # Use following if using a core connector
       - "3003:3003"
       - "3004:3004"
     volumes:
@@ -143,6 +142,7 @@ services:
       - SDK_API_SPEC_FILE=./core-connector-config/core-connector-api-spec-sdk.yml
       # Mojaloop Connector
       - SDK_BASE_URL=http://sdk-scheme-adapter:4001
+    # TODO: Add core-connector profile
 
   # NOTE: The following UI for sim backend can be enabled for debugging purpose
   sim-backend-ui:
@@ -181,6 +181,7 @@ services:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=false
       - AUTO_ACCEPT_R2P_PARTY=false
+      # TODO: Make the port configurable
       - BACKEND_ENDPOINT=sim-backend:3003
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
