@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 #
 #  Component arrangement is as below:
 #
@@ -16,7 +16,6 @@ version: '3.7'
 #                                    └───────────────┘
 
 services:
-
   frontend:
     image: pm4ml/mojaloop-payment-manager-ui:1.17.6
     environment:
@@ -29,19 +28,19 @@ services:
       - portal
 
   keycloak:
-   image: quay.io/keycloak/keycloak:12.0.4
-   environment:
-     - KEYCLOAK_USER=admin
-     - KEYCLOAK_PASSWORD=admin
-     - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
-     - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
-     - DB_VENDOR=h2
-   volumes:
-     - ./keycloak-realm.json:/tmp/pm4ml-realm.json
-   ports:
-     - "8080:8080"
-   profiles:
-     - portal
+    image: quay.io/keycloak/keycloak:12.0.4
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_FRONTEND_URL=http://localhost:8080/auth
+      - KEYCLOAK_IMPORT=/tmp/pm4ml-realm.json
+      - DB_VENDOR=h2
+    volumes:
+      - ./keycloak-realm.json:/tmp/pm4ml-realm.json
+    ports:
+      - "8080:8080"
+    profiles:
+      - portal
 
   experience-api:
     image: pm4ml/mojaloop-payment-manager-experience-api:3.1.1
@@ -71,7 +70,7 @@ services:
     depends_on:
       - management-api
       - redis
-#      - keycloak
+    #      - keycloak
     profiles:
       - portal
 
@@ -107,8 +106,8 @@ services:
     depends_on:
       redis:
         condition: service_started
-#      keycloak:
-#        condition: service_started
+      #      keycloak:
+      #        condition: service_started
       init-vault:
         condition: service_completed_successfully
 
@@ -136,14 +135,13 @@ services:
   core-connector:
     image: ${CORE_CONNECTOR_IMAGE:-mojaloop/ml-testing-toolkit}:${CORE_CONNECTOR_TAG:-v18.5.1}
     env_file:
-        - core-connector-config.env
+      - core-connector-config.env
     ports:
       - "3003:3003"
       - "3004:3004"
     volumes:
       - ./core-connector-config/:/opt/app/core-connector-config/
     environment:
-      # Uncomment if using a core-connector for sim-backend
       # SERVER CONFIGS
       - DFSP_SERVER_HOST=0.0.0.0
       - DFSP_SERVER_PORT=3004
@@ -162,9 +160,20 @@ services:
     ports:
       - "6061:6060"
     environment:
-      # For ttk as sim-backend
-      # - API_BASE_URL=http://localhost:5051
-      # For core connector
+      - API_BASE_URL=http://localhost:5051
+      - AUTH_ENABLED=FALSE
+    command:
+      - sh
+      - /usr/share/nginx/start.sh
+    profiles:
+      - sim-backend
+
+  # NOTE: The following UI for core-connector can be enabled for debugging purpose
+  core-connector-ui:
+    image: mojaloop/ml-testing-toolkit-ui:v16.0.4
+    ports:
+      - "6062:6060"
+    environment:
       - API_BASE_URL=http://localhost:3003
       - AUTH_ENABLED=FALSE
     command:
@@ -172,7 +181,6 @@ services:
       - /usr/share/nginx/start.sh
     profiles:
       - core-connector
-      - sim-backend
 
   redis:
     image: bitnami/redis:7.0.8-debian-11-r0
@@ -196,7 +204,6 @@ services:
       - AUTO_ACCEPT_PARTY=true
       - AUTO_ACCEPT_QUOTES=false
       - AUTO_ACCEPT_R2P_PARTY=false
-      - BACKEND_ENDPOINT=core-connector:${BACKEND_PORT:-3003}
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
       - ENABLE_BACKEND_EVENT_HANDLER=false
