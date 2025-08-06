@@ -137,8 +137,8 @@ services:
     env_file:
       - core-connector-config.env
     ports:
-      - "3003:3003"
-      - "3004:3004"
+      - "13003:3003"
+      - "13004:3004"
     volumes:
       - ./core-connector-config/:/opt/app/core-connector-config/
     environment:
@@ -168,19 +168,19 @@ services:
     profiles:
       - sim-backend
 
-  # NOTE: The following UI for core-connector can be enabled for debugging purpose
-  core-connector-ui:
-    image: mojaloop/ml-testing-toolkit-ui:v16.0.4
-    ports:
-      - "6062:6060"
-    environment:
-      - API_BASE_URL=http://localhost:3003
-      - AUTH_ENABLED=FALSE
-    command:
-      - sh
-      - /usr/share/nginx/start.sh
-    profiles:
-      - core-connector
+  # # NOTE: The following UI for core-connector can be enabled for debugging purpose
+  # core-connector-ui:
+  #   image: mojaloop/ml-testing-toolkit-ui:v16.0.4
+  #   ports:
+  #     - "6062:6060"
+  #   environment:
+  #     - API_BASE_URL=http://localhost:3003
+  #     - AUTH_ENABLED=FALSE
+  #   command:
+  #     - sh
+  #     - /usr/share/nginx/start.sh
+  #   profiles:
+  #     - core-connector
 
   redis:
     image: bitnami/redis:7.0.8-debian-11-r0
@@ -198,23 +198,21 @@ services:
       - sh
       - -c
       - "yarn start:api-svc"
+    env_file:
+      - ./default-config.env
+      - ./.env
     environment:
       - API_TYPE=iso20022
       - ILP_VERSION=4
-      - AUTO_ACCEPT_PARTY=true
-      - AUTO_ACCEPT_QUOTES=false
-      - AUTO_ACCEPT_R2P_PARTY=false
       - CACHE_URL=redis://redis:6379
       - ENABLE_OAUTH_TOKEN_ENDPOINT=false
       - ENABLE_BACKEND_EVENT_HANDLER=false
       - ENABLE_FSPIOP_EVENT_HANDLER=false
       - ENABLE_TEST_FEATURES=true
       - INBOUND_LISTEN_PORT=4000
-      - INBOUND_MUTUAL_TLS_ENABLED=false
       - IN_CA_CERT_PATH=/secrets/inbound-cacert.pem
       - IN_SERVER_CERT_PATH=/secrets/inbound-cert.pem
       - IN_SERVER_KEY_PATH=/secrets/inbound-key.pem
-      - JWS_SIGN=true
       - JWS_SIGNING_KEY_PATH=/jwsSigningKey.key
       - JWS_VERIFICATION_KEYS_DIRECTORY=/jwsVerificationKeys
       - METRICS_SERVER_LISTEN_PORT=4004
@@ -222,20 +220,13 @@ services:
       - MGMT_API_WS_URL=management-api
       - MGMT_API_WS_PORT=4005
       - OUTBOUND_LISTEN_PORT=4001
-      - OUTBOUND_MUTUAL_TLS_ENABLED=false
-      # hub endpoints
-      - PEER_ENDPOINT=mojaloop-testing-toolkit:4040
-      - ALS_ENDPOINT=mojaloop-testing-toolkit:4040
-      - FX_QUOTES_ENDPOINT=mojaloop-testing-toolkit:4040
-      - FX_TRANSFERS_ENPOINT=mojaloop-testing-toolkit:4040
       - TEST_LISTEN_PORT=4002
-      - VALIDATE_INBOUND_JWS=false
-      - RESERVE_NOTIFICATION=false
       - RESOURCE_VERSIONS=transfers=2.0,quotes=2.0,participants=2.0,parties=2.0,transactionRequests=1.1
       - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
       - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
-    env_file: ./.env
+      - WSO2_BEARER_TOKEN=7718fa9b-be13-3fe7-87f0-a12cf1628168 # dummy value for SDK config
     ports:
+      - "443:4000"
       - "4000:4000"
       - "4001:4001"
     volumes:
@@ -266,10 +257,12 @@ services:
 
   mojaloop-testing-toolkit-ui:
     image: mojaloop/ml-testing-toolkit-ui:v16.0.4
+    env_file:
+      - ./default-config.env
+      - ./.env
     ports:
       - "6060:6060"
     environment:
-      - API_BASE_URL=http://localhost:5050
       - AUTH_ENABLED=FALSE
     command:
       - sh
