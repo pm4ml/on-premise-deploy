@@ -34,6 +34,8 @@ Now a payment manager should be running on your machine with TTK.
 Open the URL http://localhost:6060 for TTK UI
 Go to `Monitoring` page.
 
+If you get a "500 Network Error", try opening it in an incognito windw in your browser.
+
 ### Portal UI
 
 You can see all the transfers executed in the payment manager portal.
