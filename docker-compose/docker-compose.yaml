@@ -224,6 +224,7 @@ services:
       - RESOURCE_VERSIONS=transfers=2.0,quotes=2.0,participants=2.0,parties=2.0,transactionRequests=1.1
       - FSPIOP_API_SERVER_MAX_REQUEST_BYTES=209715200
       - BACKEND_API_SERVER_MAX_REQUEST_BYTES=209715200
+      - BACKEND_ENDPOINT=http://sim-backend:5051
       - WSO2_BEARER_TOKEN=7718fa9b-be13-3fe7-87f0-a12cf1628168 # dummy value for SDK config
     ports:
       - "443:4000"
