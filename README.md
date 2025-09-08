@@ -17,7 +17,10 @@ You need to have the following software on your machine
 * docker-compose
 
 Before starting docker-compose.yaml, you need to create `.env` file with
-all required ENV VARS (see `.env.example` for reference).
+all required ENV VARS (see `.env.example` for reference). If you are only running with TTK then you can just create a blank .env.
+```
+touch .env
+```
 
 Please run the following commands to start the payment manager on your machine
 ```
