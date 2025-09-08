@@ -63,7 +63,7 @@ Login with username `admin` and password `admin`
 Execute the following curl command to send a http request to the [SDK outbound API](https://github.com/mojaloop/api-snippets/blob/main/docs/sdk-scheme-adapter-outbound-v2_1_0-openapi3-snippets.yaml) for initiating a transfer
 
 ```
-curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charset=utf-8' --data-binary '{"homeTransactionId":"1234","from":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551001","displayName":"string","firstName":"Henrik","middleName":"Johannes","lastName":"Karlsson","dateOfBirth":"1966-06-16"},"to":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551002","merchantClassificationCode":123},"amountType":"SEND","currency":"EUR","amount":"10","transactionType":"TRANSFER","note":"Note sent to Payee.","skipPartyLookup":false}'
+curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charset=utf-8' --data-binary '{"homeTransactionId":"1234","from":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551001","displayName":"string","firstName":"Henrik","middleName":"Johannes","lastName":"Karlsson","dateOfBirth":"1966-06-16"},"to":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551002","merchantClassificationCode":123},"amountType":"SEND","currency":"XTS","amount":"10","transactionType":"TRANSFER","note":"Note sent to Payee.","skipPartyLookup":false}'
 ```
 
 Please observe the transfer state 'COMMITTED' indicating a successful transfer.
@@ -99,7 +99,7 @@ You should see the logs about the transaction in the Monitoring page already ope
 You can use this repository to help with the core connector development.
 Developers can follow the following guidelines to run dependent services and simulators locally on their machines.
 
-- Disable the service `sim-backend` in docker-compose.yaml file incase if you are developing the core connector which supports inbound.
+- Disable the service `sim-backend` in docker-compose.yaml fileif you are developing a core connector which supports inbound.
 
 ### Testing outbound transfer from core-connector
 
@@ -107,14 +107,14 @@ Developers can follow the following guidelines to run dependent services and sim
 - Open the TTK monitoring page on `http://localhost:6060/admin/monitoring`
 - Try to send the following request from your core connector to the sdk-scheme-adapter service
 ```
-curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charset=utf-8' --data-binary '{"homeTransactionId":"1234","from":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551001","displayName":"string","firstName":"Henrik","middleName":"Johannes","lastName":"Karlsson","dateOfBirth":"1966-06-16"},"to":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551002","merchantClassificationCode":123},"amountType":"SEND","currency":"EUR","amount":"10","transactionType":"TRANSFER","note":"Note sent to Payee.","skipPartyLookup":false}'
+curl 'http://localhost:4001/transfers' -H 'content-type: application/json;charset=utf-8' --data-binary '{"homeTransactionId":"1234","from":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551001","displayName":"string","firstName":"Henrik","middleName":"Johannes","lastName":"Karlsson","dateOfBirth":"1966-06-16"},"to":{"type":"CONSUMER","idType":"MSISDN","idValue":"16135551002","merchantClassificationCode":123},"amountType":"SEND","currency":"XTS","amount":"10","transactionType":"TRANSFER","note":"Note sent to Payee.","skipPartyLookup":false}'
 ```
 - You should get the response with transfer state as 'COMMITTED' and you should also able to see the request in TTK monitoring page
 
 ### Testing 3-phase outbound transfer from core-connector
 
 In the above section the transfer is successful with a single HTTP call because the parameters `AUTO_ACCEPT_PARTY` and `AUTO_ACCEPT_QUOTES` are set to true in sdk-scheme-adapter section of `docker-compose.yaml` file.
-If we want to give an option to the end user (Sender) to approve the party and then approve the quote, then we need to set these parameters to false and make 3 consecutive http calls to make the transfer successful. Please following the following steps for this scenario.
+If we want to give an option to the end user (Sender) to approve the party and then approve the quote, then we need to set these parameters to false and make 3 consecutive http calls to make the transfer successful. Please use following the following steps for this scenario.
 - Set the parameters `AUTO_ACCEPT_PARTY` and `AUTO_ACCEPT_QUOTES` to false
 - Restart the docker-compose with the commands `docker-compose down -v` and `docker-compose up -d`
 - Send the above `POST /transfers` request and observe the response
